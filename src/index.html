@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=5" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Med-Nav | Sağlık Navigatörü</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" crossorigin="anonymous" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              lavender: {
+                50: '#f5f3ff',
+                600: '#8b5cf6',
+                700: '#7c3aed',
+              }
+            }
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Light Mode Professional Medical Theme */
+      body {
+        background-color: #F8FAFC; /* bg-slate-50 */
+        color: #1F2937; /* text-gray-800 */
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        cursor: default; /* Enforce standard cursor */
+      }
+      
+      ::selection { background: rgba(0, 191, 165, 0.2); color: #111827; }
+
+      .mn-shell {
+        position: relative;
+        z-index: 10;
+        background: transparent !important;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      @keyframes colorShift {
+        0% { background-color: #E0F7FA; }
+        25% { background-color: #E6E6FA; }
+        50% { background-color: #E8F5E9; }
+        75% { background-color: #FCE4EC; }
+        100% { background-color: #E0F7FA; }
+      }
+
+      .color-shift-layer {
+        animation: colorShift 60s infinite linear;
+      }
+
+      .mn-brand {
+        color: #111827 !important;
+        font-weight: 800 !important;
+        letter-spacing: normal !important;
+        text-shadow: none !important;
+        font-size: 1.5rem !important;
+        font-family: 'Inter', sans-serif !important;
+        text-transform: none !important;
+      }
+
+
+
+      /* Hero Section */
+      .mn-main {
+        padding: 3rem 1.5rem !important;
+      }
+
+      .mn-hero-title {
+        color: #000000 !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+        font-size: 2.75rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1rem !important;
+        font-family: 'Inter', sans-serif !important;
+        background: none !important;
+        -webkit-text-fill-color: initial !important;
+      }
+      
+      .mn-hero-kicker {
+        color: #0D9488 !important; /* teal */
+        text-transform: uppercase !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.5px !important;
+        font-family: 'Inter', sans-serif !important;
+        margin-bottom: 0.5rem !important;
+      }
+
+
+      
+      .mn-hero-lead {
+        color: #374151 !important; /* text-gray-700 */
+        font-size: 1.125rem !important;
+        font-weight: 400 !important;
+        max-width: 800px !important;
+        margin: 0 auto 3rem auto !important;
+        line-height: 1.6 !important;
+      }
+
+      /* Cards Grid */
+      .mn-card-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 2rem !important;
+        margin-bottom: 3rem !important;
+      }
+
+      @media (max-width: 1024px) {
+        .mn-card-grid { grid-template-columns: 1fr !important; }
+      }
+
+      /* Clean White Category Cards */
+      .mn-cat-card {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        background: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important; /* border-gray-200 */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important; /* shadow-md */
+        border-radius: 1.5rem !important; /* rounded-2xl */
+        padding: 2.5rem 1.5rem !important;
+        transition: all 0.2s ease-in-out !important;
+        position: relative !important;
+        overflow: hidden !important;
+        gap: 0.75rem !important; /* gap-3 */
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      .mn-cat-card::before, .mn-cat-card::after { display: none !important; }
+
+      .mn-cat-card:hover {
+        transform: translateY(-4px) !important;
+        border-color: #5EEAD4 !important; /* border-teal-300 */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important; /* shadow-lg */
+        background: #FFFFFF !important;
+      }
+
+      .mn-cat-card--selected {
+        background: #F0FDFA !important; /* bg-teal-50 */
+        border-color: #14B8A6 !important; /* border-teal-500 */
+        box-shadow: 0 0 0 2px #14B8A6, 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        animation: none !important;
+      }
+
+      .mn-cat-card__icon-wrap { margin-bottom: 0 !important; display: block !important; margin-right: 0 !important;}
+      .mn-fa-icon {
+        color: #0891B2 !important; /* text-cyan-600 */
+        font-size: 2.5rem !important;
+        filter: none !important;
+      }
+      .mn-cat-card--selected .mn-fa-icon {
+        color: #0D9488 !important; /* text-teal-600 */
+        filter: none !important;
+      }
+
+      .mn-cat-card__title {
+        color: #000000 !important; /* text-black */
+        font-family: 'Inter', sans-serif !important;
+        font-size: 1.25rem !important; /* text-xl */
+        font-weight: 700 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        display: block !important;
+      }
+      
+      .mn-cat-card__sub {
+        color: #374151 !important; /* text-gray-700 */
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        font-weight: 400 !important;
+        opacity: 1 !important;
+        margin: 0 !important;
+      }
+
+      /* Clean Form Panel */
+      .mn-form-panel {
+        background: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-radius: 1.5rem !important; /* rounded-2xl */
+        padding: 2.5rem !important;
+      }
+      
+      .mn-form-panel::after, .mn-form-panel::before { display: none !important; }
+
+      .mn-label { color: #111827 !important; font-weight: 600 !important; }
+      .mn-fieldset-legend { color: #111827 !important; font-weight: 600 !important; }
+
+      .mn-textarea {
+        background: #F9FAFB !important; /* bg-gray-50 */
+        border: 1px solid #D1D5DB !important; /* border-gray-300 */
+        color: #111827 !important;
+        border-radius: 0.75rem !important;
+        padding: 1.25rem !important;
+        font-size: 1rem !important;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05) !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .mn-textarea:focus {
+        border-color: #0EA5E9 !important; /* sky-500 */
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2), inset 0 1px 2px rgba(0,0,0,0.05) !important;
+        outline: none !important;
+        background: #FFFFFF !important;
+      }
+      
+      .mn-textarea::placeholder {
+        color: #9CA3AF !important; /* gray-400 */
+      }
+
+      /* Chips / Radio Buttons */
+      .mn-chip {
+        background: #FFFFFF !important;
+        border: none !important;
+        color: #4B5563 !important; /* gray-600 */
+        border-radius: 9999px !important;
+        padding: 0.5rem 1.25rem !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease-in-out !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        text-shadow: none !important;
+        cursor: pointer !important;
+      }
+      .mn-chip:hover {
+        background: #F0FDFA !important;
+        color: #0F766E !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      }
+      .mn-chip:has(input:checked) {
+        background: #F0FDFA !important;
+        color: #0F766E !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      }
+
+      /* Analyze Button */
+      .mn-btn-analyze {
+        background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%) !important; /* cyan-500 to blue-500 */
+        border: none !important;
+        color: #FFFFFF !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        border-radius: 9999px !important; /* rounded-full */
+        padding: 1.25rem 2.5rem !important; /* px-10 py-5 */
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.5) !important;
+        text-shadow: none !important;
+        transition: all 0.2s ease-in-out !important;
+        font-size: 1.125rem !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+      }
+      
+      .mn-btn-analyze:hover {
+        transform: translateY(-2px) !important;
+        background: linear-gradient(135deg, #0891B2 0%, #2563EB 100%) !important;
+        box-shadow: 0 0 30px rgba(6, 182, 212, 0.7) !important;
+      }
+
+      /* Summary Updates */
+      .mn-dash-main { background: transparent !important; }
+      .mn-holo-surface {
+        background: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-radius: 1.5rem !important;
+      }
+      .mn-panel-title { color: #111827 !important; font-family: 'Inter', sans-serif !important; font-weight: 700 !important; }
+      .mn-prose p { color: #374151 !important; font-size: 1.05rem !important;}
+      .mn-hint { color: #6B7280 !important; }
+
+      @keyframes holoPulse {
+        0%, 100% { box-shadow: 0 0 25px rgba(34, 211, 238, 0.4); }
+        50% { box-shadow: 0 0 50px rgba(34, 211, 238, 0.7); }
+      }
+
+      @keyframes holoGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .mn-holo-panel {
+        background: linear-gradient(135deg, rgba(224, 247, 250, 0.2), rgba(230, 230, 250, 0.2), rgba(232, 245, 233, 0.2)) !important;
+        background-size: 200% 200% !important;
+        animation: holoPulse 4s infinite ease-in-out, holoGradient 15s infinite ease-in-out !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      }
+
+      .mn-medical-grid {
+        background-image: 
+          linear-gradient(rgba(34, 211, 238, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(34, 211, 238, 0.08) 1px, transparent 1px) !important;
+        background-size: 40px 40px !important;
+      }
+
+      @keyframes reverse-spin {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+      .animate-reverse-spin {
+        animation: reverse-spin 6s linear infinite;
+      }
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .animate-spin-slow {
+        animation: spin-slow 12s linear infinite;
+      }
+    </style>
+  </head>
+  <body class="mn-body text-lg md:text-[1.1875rem] leading-relaxed antialiased relative text-gray-800">
+    <!-- Dynamic Holographic Header -->
+    <header class="w-full min-w-full h-24 flex items-center justify-between px-12 relative sticky top-0 z-50 border-b border-white/20 overflow-hidden no-print">
+      <!-- Animated Base Layer -->
+      <div class="color-shift-layer absolute inset-0 z-0 opacity-70"></div>
+      <!-- Glass Blur Layer -->
+      <div class="absolute inset-0 z-10 bg-white/40 backdrop-blur-xl"></div>
+      <!-- Content Layer -->
+      <div class="relative z-20 w-full flex items-center justify-between">
+        <div class="flex items-center gap-x-4">
+          <img src="/logo.png" alt="Med-Nav Logo" class="h-24 w-auto object-contain" />
+          <span id="mn-global-badge" class="text-xl font-extrabold text-cyan-900 tracking-tight pr-6">Sağlık Navigatörü</span>
+        </div>
+        <div id="mn-global-actions" class="flex items-center gap-4"></div>
+      </div>
+    </header>
+    <div id="view-input">
+      <div id="app" class="mn-root relative z-10 w-full"></div>
+    </div>
+
+    <!-- Results Dashboard View -->
+    <!-- Results Dashboard View (Restoration v5) -->
+    <div id="view-results" class="hidden px-12 pb-20 no-print">
+      <div id="results-action-bar" class="w-full max-w-7xl mx-auto mb-8 p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-sm flex items-center justify-center gap-6">
+        <button id="btn-reset" class="px-10 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="text-2xl transition-transform group-hover:-translate-x-1">←</span>
+          <span>Yeni Raporu İncele</span>
+        </button>
+        <button id="btn-download-pdf" class="px-10 py-4 bg-lavender-600 hover:bg-lavender-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group">
+          <svg class="w-6 h-6 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Raporu PDF İndir</span>
+        </button>
+      </div>
+      
+      <div id="pdf-export-area" class="w-full">
+        <!-- Main Dashboard: Anatomy, Findings, Genomics -->
+        <div id="results-dashboard" class="mt-6 p-12 rounded-[2.5rem] mn-holo-panel mn-medical-grid relative overflow-hidden ring-1 ring-white/20">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- Column 1: Anatomical Map -->
+            <div id="col-anatomy" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl flex flex-col items-center justify-center">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Anatomik Harita</h3>
+              <div class="relative w-fit mx-auto">
+                <img src="/anatomi.png" alt="Clinical Anatomy" class="block max-w-full h-auto object-contain z-0 drop-shadow-2xl">
+                <div id="anatomy-markers" class="absolute inset-0 z-10 w-full h-full pointer-events-none"></div>
+              </div>
+            </div>
+
+            <!-- Column 2: Clinical Summary -->
+            <div id="col-summary" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Klinik Özet</h3>
+              <div class="bg-white/60 p-8 rounded-3xl border border-white/40 shadow-inner space-y-10">
+                <div class="flex items-start gap-5">
+                  <div class="w-5 h-5 rounded-full bg-red-600 mt-2 shadow-[0_0_20px_rgba(220,38,38,0.6)] animate-pulse"></div>
+                  <div>
+                    <p class="font-semibold text-slate-600 text-base mb-2 uppercase tracking-widest">Ön Klinik Teşhis (AI)</p>
+                    <p id="results-diagnosis" class="text-2xl font-semibold text-red-600 tracking-tight leading-tight"></p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
+                  <span class="text-4xl">🔍</span>
+                  <div class="flex-1">
+                    <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Detaylı Bulgular</p>
+                    <div id="results-findings" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
+                  <span class="text-4xl">💡</span>
+                  <div class="flex-1">
+                    <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Yaşam Tarzı Önerileri</p>
+                    <div id="results-suggestions" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Genomics Analysis -->
+            <div id="col-genomics" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Genomik Analiz</h3>
+              <div id="results-genomics" class="space-y-12"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lower Panel: Doctor Questions -->
+        <div id="view-results-lower" class="w-full mt-8 p-10 bg-white/20 backdrop-blur-xl rounded-[2.5rem] mn-holo-panel border border-white/30 shadow-2xl transition-all duration-700">
+          <div class="flex items-center gap-4 mb-8 border-b border-white/20 pb-4 uppercase font-display">
+            <span class="text-4xl">💬</span>
+            <h3 class="text-3xl font-semibold text-slate-900 tracking-tighter">Doktorunuza Sorun</h3>
+          </div>
+          <div id="results-questions" class="grid grid-cols-1 md:grid-cols-1 gap-6"></div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+
+    <!-- SPA Loading Screen (Clean Modern Health-Tech) -->
+    <div id="view-loading" class="hidden fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-md overflow-hidden">
+      <!-- Minimalist Compass -->
+      <div class="relative w-64 h-64 flex items-center justify-center">
+        <!-- Quiet Pulse Outer Ring -->
+        <div class="absolute inset-0 border-2 border-cyan-500/10 rounded-full animate-pulse"></div>
+        <!-- Inner Float Circle -->
+        <div class="relative z-10 w-32 h-32 bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center border border-cyan-100 shadow-sm">
+          <i class="fa-solid fa-compass text-6xl text-cyan-500 animate-spin-slow"></i>
+        </div>
+      </div>
+      
+      <!-- Elegant Loading Text -->
+      <div class="mt-12 text-center relative z-20">
+        <h2 class="text-3xl font-semibold text-cyan-600 tracking-tight uppercase font-display animate-pulse">Yapay Zeka Analiz Ediyor...</h2>
+        <div class="mt-4 flex items-center justify-center gap-4 opacity-60">
+          <span class="w-8 h-px bg-cyan-300"></span>
+          <p class="text-cyan-800 font-medium tracking-widest uppercase text-xs">Klinik Veri Navigasyonu</p>
+          <span class="w-8 h-px bg-cyan-300"></span>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
