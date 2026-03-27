@@ -97,6 +97,7 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
     2. Cevabın SADECE ve KESİNLİKLE geçerli bir JSON nesnesi olmalıdır.
     3. JSON bloğu dışında tek bir kelime, açıklama veya markdown işaretleri (kod blokları) ekleme.
     4. "anatomi_organ_kodu" için ('throat', 'heart', 'liver', 'lungs', 'kidneys', 'stomach', 'brain', 'spine', 'shoulder', 'hip', 'knee', 'general') değerlerinden en uygununu seç.
+    5. "risk_level" için raporun bütününe göre ('High', 'Medium', 'Low') değerlerinden birini seç.
     
     İSTENEN JSON FORMATI:
     {
@@ -108,7 +109,8 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
         {"terim": "TıbbiTerim1", "aciklama": "Basit dille açıklaması"},
         {"terim": "TıbbiTerim2", "aciklama": "Basit dille açıklaması"}
       ],
-      "anatomi_organ_kodu": "uygun_kod"
+      "anatomi_organ_kodu": "uygun_kod",
+      "risk_level": "High | Medium | Low"
     }
   `.trim();
 }

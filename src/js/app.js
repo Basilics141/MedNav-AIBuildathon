@@ -1,9 +1,11 @@
 import { analyzeReport } from './api.js';
 import { analyzeReportWithGroq } from '../agents/analyzerAgent.js';
+import { sendChatMessage } from '../agents/chatAgent.js';
 import { renderBodyMap } from './body-map.js';
 import { escapeHtml, wrapTermsInSummary } from './ui-helpers.js';
 import logoUrl from '../assets/logo.png';
 import { getCoordinates } from '../anatomy_data.js';
+import { updateRadarChart } from './radarChart.js';
 
 const KATEGORILER = [
   {
@@ -29,7 +31,7 @@ const KATEGORILER = [
   },
 ];
 
-/** @type {{ screen: string, kategori: string | null, hedefKitle: string, raporMetni: string, result: object | null, error: string | null }} */
+/** @type {{ screen: string, kategori: string | null, hedefKitle: string, raporMetni: string, result: object | null, error: string | null, chat: object }} */
 let state = {
   screen: 'home',
   kategori: null,
@@ -37,6 +39,11 @@ let state = {
   raporMetni: '',
   result: null,
   error: null,
+  chat: {
+    active: false,
+    history: [],
+    context: null
+  }
 };
 
 let rootEl = null;
@@ -314,6 +321,11 @@ async function runAnalyze() {
     state.result = result;
     state.screen = 'dashboard';
     state.error = null;
+
+    // Chat context güncelleme
+    state.chat.context = result;
+    state.chat.history = [];
+    showChatPanel();
   } catch (err) {
     if (viewLoading) viewLoading.classList.add('hidden');
     if (viewInput) viewInput.classList.remove('hidden');
@@ -354,33 +366,9 @@ function populateResultsUI(data) {
 
   if (suggestionsEl) suggestionsEl.innerText = data.yasam_tarzi;
 
-  if (genomicsEl) {
-    // Rastgele ama gerçekçi genomik veriler üret
-    const getRandomVal = () => Math.floor(Math.random() * (95 - 40 + 1)) + 40;
-    const motif = getRandomVal();
-    const cell = getRandomVal();
-    
-    genomicsEl.innerHTML = `
-      <div class='bg-white/40 p-6 rounded-3xl border border-white/40 shadow-sm'>
-        <div class='flex justify-between items-end mb-4'>
-          <span class='text-lg font-semibold text-slate-900 tracking-tight uppercase font-display'>DNA Motif Eşleşmesi</span>
-          <span class='text-2xl font-semibold text-cyan-700 tracking-tighter'>%${motif}</span>
-        </div>
-        <div class='w-full bg-slate-200/50 rounded-full h-5 overflow-hidden shadow-inner'>
-          <div class='bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full shadow-[0_0_20px_rgba(6,182,212,0.5)]' style='width: ${motif}%'></div>
-        </div>
-      </div>
-      <div class='bg-white/40 p-6 rounded-3xl border border-white/40 shadow-sm'>
-        <div class='flex justify-between items-end mb-4'>
-          <span class='text-lg font-semibold text-slate-900 tracking-tight uppercase font-display'>Hücresel Yenilenme</span>
-          <span class='text-2xl font-semibold text-emerald-700 tracking-tighter'>%${cell}</span>
-        </div>
-        <div class='w-full bg-slate-200/50 rounded-full h-5 overflow-hidden shadow-inner'>
-          <div class='bg-gradient-to-r from-emerald-500 to-teal-600 h-full rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]' style='width: ${cell}%'></div>
-        </div>
-      </div>
-    `;
-  }
+  // --- Dynamic Radar Chart (Replaces Genomik Progress Bars) ---
+  const risk = data.risk_level || 'Low';
+  updateRadarChart(risk);
 
   if (sorularEl && data.doktora_sorular) {
     sorularEl.innerHTML = data.doktora_sorular.map(q => `
@@ -466,7 +454,19 @@ export function initApp(root) {
     if (textArea) textArea.value = '';
     state.raporMetni = '';
     state.screen = 'home';
+    
+    // Chat sıfırlama
+    hideChatPanel();
+    state.chat.active = false;
+    state.chat.history = [];
+
     render();
+  });
+
+  // Chat Event Listeners
+  document.getElementById('chat-send-btn')?.addEventListener('click', handleChatSubmit);
+  document.getElementById('chat-user-input')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleChatSubmit();
   });
 
   // PDF Download Flow
@@ -722,6 +722,77 @@ export function initApp(root) {
     raporMetni: '',
     result: null,
     error: null,
+    chat: {
+      active: false,
+      history: [],
+      context: null
+    }
   };
   render();
+}
+
+/**
+ * Chat UI Yardımcıları
+ */
+function showChatPanel() {
+  const panel = document.getElementById('mn-chat-panel');
+  if (panel) {
+    panel.classList.add('active');
+    state.chat.active = true;
+  }
+}
+
+function hideChatPanel() {
+  const panel = document.getElementById('mn-chat-panel');
+  if (panel) {
+    panel.classList.remove('active');
+  }
+}
+
+function appendChatMsg(role, text) {
+  const list = document.getElementById('chat-messages-list');
+  if (!list) return;
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `chat-msg ${role === 'user' ? 'chat-msg-user' : 'chat-msg-ai'}`;
+  msgDiv.innerText = text;
+  list.appendChild(msgDiv);
+  list.scrollTop = list.scrollHeight;
+}
+
+function showChatTyping() {
+  const list = document.getElementById('chat-messages-list');
+  if (!list) return;
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'chat-typing-indicator';
+  typingDiv.className = 'chat-msg chat-msg-ai';
+  typingDiv.innerHTML = `<div class="chat-typing-dots"><span></span><span></span><span></span></div>`;
+  list.appendChild(typingDiv);
+  list.scrollTop = list.scrollHeight;
+}
+
+function hideChatTyping() {
+  const indicator = document.getElementById('chat-typing-indicator');
+  if (indicator) indicator.remove();
+}
+
+async function handleChatSubmit() {
+  const input = document.getElementById('chat-user-input');
+  const userText = input.value.trim();
+  if (!userText || !state.chat.context) return;
+
+  input.value = '';
+  appendChatMsg('user', userText);
+  showChatTyping();
+
+  try {
+    const aiResponse = await sendChatMessage(userText, state.chat.context, state.chat.history);
+    hideChatTyping();
+    appendChatMsg('ai', aiResponse);
+    state.chat.history.push({ role: 'user', content: userText });
+    state.chat.history.push({ role: 'assistant', content: aiResponse });
+  } catch (err) {
+    hideChatTyping();
+    appendChatMsg('ai', 'Üzgünüm, şu an cevap veremiyorum. Lütfen tekrar deneyin.');
+  }
 }

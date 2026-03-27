@@ -192,3 +192,35 @@ export async function analyzeWithGroq({ raporMetni, kategori, hedefKitle }) {
   }
 }
 
+/**
+ * Groq Chat API (Generic Text Response)
+ */
+export async function chatWithGroq({ messages }) {
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+  if (!apiKey) throw new Error('Groq API anahtarı eksik.');
+
+  const body = {
+    model: "llama-3.3-70b-versatile",
+    messages: messages,
+    temperature: 0.5,
+    max_tokens: 1024
+  };
+
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey.trim()}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(`Chat Hatası: ${errData.error?.message || 'Bilinmeyen hata'}`);
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+

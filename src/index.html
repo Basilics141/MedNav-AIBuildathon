@@ -408,7 +408,35 @@
             <!-- Column 3: Genomics Analysis -->
             <div id="col-genomics" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
               <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Genomik Analiz</h3>
-              <div id="results-genomics" class="space-y-12"></div>
+              <div id="radar-container" class="relative w-full aspect-square flex items-center justify-center p-4 bg-white/10 rounded-[2rem] border border-white/20 transition-all duration-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                <canvas id="healthRadarChart"></canvas>
+              </div>
+
+              <!-- Integrated AI Chat Assistant (Upgraded Theme) -->
+              <div id="mn-chat-panel" class="w-full mt-8 h-[450px] bg-white/70 backdrop-blur-2xl rounded-[2rem] border-2 border-cyan-400/40 shadow-[0_0_15px_rgba(34,211,238,0.3)] flex flex-col overflow-hidden transition-all duration-700 opacity-0 transform translate-y-4 pointer-events-none">
+                <!-- Chat Header -->
+                <div class="p-5 bg-white/30 border-b border-cyan-400/20 flex flex-col items-center justify-center text-center">
+                  <h4 class="text-xl font-bold text-cyan-500 tracking-tight font-display uppercase">Llama-3 Sağlık Asistanı</h4>
+                  <div class="w-12 h-0.5 bg-cyan-400/50 mt-1 rounded-full"></div>
+                </div>
+
+                <!-- Chat Messages List -->
+                <div id="chat-messages-list" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
+                  <div class="bg-cyan-50/50 border border-cyan-100 p-4 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                    Merhaba! Tahlil sonuçlarınızı inceledim. Raporunuz hakkında sormak istediğiniz detaylı bir soru var mı? Size yardımcı olmaktan mutluluk duyarım.
+                  </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-4 bg-white/40 border-t border-white/20">
+                  <div class="relative flex items-center gap-2">
+                    <input id="chat-user-input" type="text" placeholder="Asistan ile konuşun..." class="flex-1 bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/10 transition-all">
+                    <button id="chat-send-btn" class="w-10 h-10 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl flex items-center justify-center shadow-md transition-all active:scale-95">
+                      <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -421,6 +449,7 @@
           </div>
           <div id="results-questions" class="grid grid-cols-1 md:grid-cols-1 gap-6"></div>
         </div>
+
       </div>
 
       </div>

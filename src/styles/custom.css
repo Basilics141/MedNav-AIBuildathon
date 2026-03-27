@@ -1247,3 +1247,107 @@
     display: none !important;
   }
 }
+
+/* Dashboard Column Alignment Fix — Top-align anatomy to match summary/genomics */
+#col-anatomy {
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding-top: 2.5rem !important; /* Matches p-10 (10 * 0.25rem = 2.5rem) */
+}
+
+/* —— AI Chat Assistant — Vibrant Clinical Cyan Theme —— */
+#mn-chat-panel.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#chat-messages-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+#chat-messages-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#chat-messages-list::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.2);
+  border-radius: 10px;
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: 0.85rem 1.15rem;
+  border-radius: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  position: relative;
+  animation: msg-slide-up 0.4s var(--mn-ease-out);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes msg-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg-user {
+  align-self: flex-end;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.chat-msg-ai {
+  align-self: flex-start;
+  background: #f0fdff; /* Extra bright cyan tint */
+  color: #0891b2;
+  font-weight: 500;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.08);
+}
+
+.chat-typing-dots {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.chat-typing-dots span {
+  width: 6px;
+  height: 6px;
+  background: #22d3ee;
+  border-radius: 50%;
+  animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.chat-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+#chat-user-input {
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+#chat-user-input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+#chat-send-btn {
+  background-color: #0891b2;
+  box-shadow: 0 4px 10px rgba(8, 145, 178, 0.2);
+}
+
+#chat-send-btn:hover {
+  background-color: #0e7490;
+  box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
