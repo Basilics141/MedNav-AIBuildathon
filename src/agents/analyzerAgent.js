@@ -1,17 +1,17 @@
-export async function simulateAnalysis(text) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        risk_level: 'High',
-        affected_organ_id: 'liver',
-        diagnosis_summary: 'Test summary',
-        key_findings: ['High AST', 'High ALT'],
-        doctor_questions: [
-          'Karaciğer yağlanmamın evresi tam olarak nedir ve diğer organlarımı etkileyebilir mi?',
-          'Beslenme ve egzersiz dışında bu tabloyu iyileştirmek için ilaç tedavisi gerekli mi?',
-          'Bir sonraki kontrol tetkikimi ne zaman yaptırmalıyım ve hangi değerleri takip etmeliyiz?'
-        ]
-      });
-    }, 2000);
-  });
+import { analyzeWithGroq } from '../js/api.js';
+
+/**
+ * Med-Nav Groq Agent
+ * Acts as the 'Brain' Layer, handling API communication and AI-driven analysis.
+ * 
+ * @param {{ raporMetni: string, kategori: string, hedefKitle: string }} payload
+ */
+export async function analyzeReportWithGroq(payload) {
+  try {
+    const result = await analyzeWithGroq(payload);
+    return result;
+  } catch (err) {
+    if (err instanceof Error) throw err;
+    throw new Error('Analiz motoru (Groq-Agent) beklenmedik bir hata ile karşılaştı.');
+  }
 }
