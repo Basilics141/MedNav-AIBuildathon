@@ -43,6 +43,17 @@ export const anatomyMap = {
 
 // Yapay zeka bilinmeyen bir organ döndürürse hata vermemesi için güvenli (fallback) fonksiyon
 export function getCoordinates(organKey) {
-    // Eğer organ haritada varsa onu döndür, yoksa varsayılan olarak gövdenin merkezini (mide/göbek deliği hizası) döndür.
-    return anatomyMap[organKey] || { top: '45%', left: '50%' };
+    if (!organKey) return { top: '10%', left: '50%' };
+    
+    // Normalizasyon (küçük harf ve boşluk temizleme)
+    const normalizedKey = organKey.toLowerCase().trim();
+    const coords = anatomyMap[normalizedKey];
+
+    if (!coords) {
+        // Hatalı veya bilinmeyen bir anahtar gelirse konsola bas ve güvenli bir noktaya (baş bölgesi) odaklan
+        console.warn("Organ key not found in map: " + organKey);
+        return { top: '10%', left: '50%' }; 
+    }
+
+    return coords;
 }

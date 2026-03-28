@@ -96,7 +96,9 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
     1. Tıbbi verileri analiz et ve aşağıdaki JSON formatında bir cevap üret.
     2. Cevabın SADECE ve KESİNLİKLE geçerli bir JSON nesnesi olmalıdır.
     3. JSON bloğu dışında tek bir kelime, açıklama veya markdown işaretleri (kod blokları) ekleme.
-    4. "anatomi_organ_kodu" için ('throat', 'heart', 'liver', 'lungs', 'kidneys', 'stomach', 'brain', 'spine', 'shoulder', 'hip', 'knee', 'general') değerlerinden en uygununu seç.
+    4. "anatomi_organ_kodu" için YALNIZCA şu listeden en uygun olan KODU seçmelisin: 
+       [brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee]
+       Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de). Emin değilsen "general" seç.
     5. "risk_level" için raporun bütününe göre ('High', 'Medium', 'Low') değerlerinden birini seç.
     
     İSTENEN JSON FORMATI:

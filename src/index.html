@@ -328,6 +328,26 @@
       .animate-spin-slow {
         animation: spin-slow 12s linear infinite;
       }
+
+      /* Print Styles */
+      @media print {
+        .no-print, 
+        .no-print-control, 
+        #mn-chat-panel, 
+        header, 
+        #results-action-bar,
+        .mn-chat-panel {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          padding: 0 !important;
+        }
+        .mn-shell {
+          max-width: none !important;
+          margin: 0 !important;
+        }
+      }
     </style>
   </head>
   <body class="mn-body text-lg md:text-[1.1875rem] leading-relaxed antialiased relative text-gray-800">

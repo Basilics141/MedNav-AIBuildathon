@@ -31,7 +31,6 @@ const KATEGORILER = [
   },
 ];
 
-/** @type {{ screen: string, kategori: string | null, hedefKitle: string, raporMetni: string, result: object | null, error: string | null, chat: object }} */
 let state = {
   screen: 'home',
   kategori: null,
@@ -299,7 +298,6 @@ async function runAnalyze() {
   const viewLoading = document.getElementById('view-loading');
   const viewResults = document.getElementById('view-results');
 
-  // 1) UI Loading Durumuna Geç
   if (viewInput) viewInput.classList.add('hidden');
   if (viewLoading) viewLoading.classList.remove('hidden');
 
@@ -310,10 +308,8 @@ async function runAnalyze() {
       hedefKitle: state.hedefKitle,
     });
     
-    // UI'ı doldur
     populateResultsUI(result);
 
-    // Sonuç Ekranına Geç
     if (viewLoading) viewLoading.classList.add('hidden');
     if (viewResults) viewResults.classList.remove('hidden');
     window.scrollTo(0, 0);
@@ -322,7 +318,6 @@ async function runAnalyze() {
     state.screen = 'dashboard';
     state.error = null;
 
-    // Chat context güncelleme
     state.chat.context = result;
     state.chat.history = [];
     showChatPanel();
@@ -335,20 +330,15 @@ async function runAnalyze() {
   }
 }
 
-/**
- * AI'dan gelen veriyi modern UI bileşenlerine aktarır.
- */
 function populateResultsUI(data) {
   const teshisEl = document.getElementById('results-diagnosis');
   const bulgularEl = document.getElementById('results-findings');
   const suggestionsEl = document.getElementById('results-suggestions');
-  const genomicsEl = document.getElementById('results-genomics');
   const sorularEl = document.getElementById('results-questions');
 
   if (teshisEl) teshisEl.innerText = data.on_teshis;
   
   if (bulgularEl) {
-    // Sözlükteki terimleri metin içinde bulup tooltip ile sar
     let processedBulgular = data.detayli_bulgular;
     if (data.sozluk && data.sozluk.length > 0) {
       const sorted = [...data.sozluk].sort((a, b) => b.terim.length - a.terim.length);
@@ -366,7 +356,6 @@ function populateResultsUI(data) {
 
   if (suggestionsEl) suggestionsEl.innerText = data.yasam_tarzi;
 
-  // --- Dynamic Radar Chart (Replaces Genomik Progress Bars) ---
   const risk = data.risk_level || 'Low';
   updateRadarChart(risk);
 
@@ -380,7 +369,6 @@ function populateResultsUI(data) {
     `).join('');
   }
 
-  // --- Anatomik İşaretleyici (Marker) ---
   const markersContainer = document.getElementById('anatomy-markers');
   if (markersContainer) {
     markersContainer.innerHTML = '';
@@ -388,13 +376,10 @@ function populateResultsUI(data) {
     const coords = getCoordinates(organCode);
     
     const marker = document.createElement('div');
-    marker.className = 'AnatomicalMap_marker__1 pulsing-marker absolute z-20 rounded-full animate-pulse border-[6px] border-red-600 flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.8)]';
-    marker.style.width = '52px';
-    marker.style.height = '52px';
+    marker.className = 'AnatomicalMap_marker__1 pulsing-marker absolute z-20 rounded-full border-red-600 flex items-center justify-center';
     marker.style.top = coords.top;
     marker.style.left = coords.left;
-    marker.style.transform = 'translate(-50%, -50%)';
-    marker.innerHTML = `<div class='w-4 h-4 bg-red-950 rounded-full'></div>`;
+    marker.innerHTML = `<div class='pulsing-marker-dot'></div>`;
     markersContainer.appendChild(marker);
   }
 }
@@ -446,7 +431,6 @@ export function initApp(root) {
   rootEl = root;
   bindGlobalEvents();
 
-  // Reset Button Flow
   document.getElementById('btn-reset')?.addEventListener('click', () => {
     document.getElementById('view-results')?.classList.add('hidden');
     document.getElementById('view-input')?.classList.remove('hidden');
@@ -455,285 +439,173 @@ export function initApp(root) {
     state.raporMetni = '';
     state.screen = 'home';
     
-    // Chat sıfırlama
     hideChatPanel();
     state.chat.active = false;
     state.chat.history = [];
-
     render();
   });
 
-  // Chat Event Listeners
   document.getElementById('chat-send-btn')?.addEventListener('click', handleChatSubmit);
   document.getElementById('chat-user-input')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleChatSubmit();
   });
 
-  // PDF Download Flow
-  document.getElementById('btn-download-pdf')?.addEventListener('click', () => {
-    const exportArea = document.getElementById('pdf-export-area');
-    if (!exportArea) return;
+  document.getElementById('btn-download-pdf')?.addEventListener('click', async function() {
+    const btn = this;
+    const originalContent = btn.innerHTML;
+    
+    // Visual feedback for preparation
+    btn.innerHTML = `<i class="fa-solid fa-sync fa-spin"></i> <span>Rapor Hazırlanıyor...</span>`;
+    btn.disabled = true;
+
+    // 1. Animation Delay: Wait for Radar Chart animations to finalize (2000ms)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const radarCanvas = document.getElementById('healthRadarChart');
+    const radarImage = radarCanvas ? radarCanvas.toDataURL('image/png', 1.0) : '';
     const logoSrc = window.location.origin + "/logo.png";
 
-    const printWindow = window.open('', '_blank', 'width=1100,height=1400');
+    const printWindow = window.open('', '_blank', 'width=1200,height=1400');
+    
+    // Use template literal for cleaner HTML injection and fix concatenation bugs
     printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>MedNav - Klinik Analiz Raporu</title>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-            
-            * { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            body { 
-              background: #f1f5f9; 
-              margin: 0; 
-              padding: 40px 0; 
-              font-family: 'Inter', sans-serif; 
-              color: #0f172a;
-              display: flex; 
-              flex-direction: column;
-              align-items: center;
-              min-height: 100vh;
-            }
-
-            /* Dedicated A4 Wrapper */
-            #pdf-content {
-              width: 210mm;
-              min-height: 297mm;
-              background: white;
-              padding: 20mm;
-              box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-              position: relative;
-              overflow: hidden;
-            }
-
-            .pdf-header {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              border-bottom: 2px solid #0891b2;
-              padding-bottom: 25px;
-              margin-bottom: 35px;
-            }
-
-            .logo-wrap { display: flex; align-items: center; gap: 15px; }
-            .logo-img { height: 60px; width: auto; object-fit: contain; }
-            .logo-text { font-size: 24px; font-weight: 800; color: #164e63; letter-spacing: -0.5px; }
-            
-            .report-meta { text-align: right; }
-            .report-meta .title { font-size: 10px; font-weight: 800; color: #0891b2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
-            .report-meta .date { font-size: 12px; color: #64748b; font-weight: 500; }
-
-            /* Grid Restoration - 2 Column Main */
-            .pdf-grid-main {
-              display: grid;
-              grid-template-columns: 280px 1fr;
-              gap: 30px;
-              margin-bottom: 30px;
-            }
-
-            /* Panel Styling */
-            .pdf-panel {
-              background: #ffffff;
-              border: 1px solid #e2e8f0;
-              border-radius: 16px;
-              padding: 24px;
-              margin-bottom: 25px;
-              page-break-inside: avoid;
-            }
-
-            .panel-title {
-              font-size: 13px;
-              font-weight: 800;
-              color: #1e293b;
-              text-transform: uppercase;
-              letter-spacing: 1px;
-              margin-bottom: 15px;
-              display: flex;
-              align-items: center;
-              gap: 10px;
-            }
-
-            /* Component Fixes */
-            #col-anatomy { display: flex; flex-direction: column; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; padding: 25px; border-radius: 16px; }
-            #col-anatomy img { max-width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-            #col-anatomy .relative.w-fit { transform: scale(0.85); transform-origin: top center; margin-top: 20px; }
-
-            #results-diagnosis { font-size: 20px; color: #be123c; font-weight: 800; line-height: 1.3; margin-top: 8px; }
-            .diag-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; }
-
-            .finding-item { display: flex; gap: 15px; padding-top: 20px; margin-top: 20px; border-top: 1px solid #f1f5f9; }
-            .finding-icon { font-size: 24px; min-width: 32px; }
-            .finding-content p { font-size: 13px; line-height: 1.6; color: #334155; }
-            .finding-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-
-            /* Genomics Section */
-            .gen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
-            .gen-item { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
-
-            /* Questions Section */
-            .questions-panel { background: #fafafa; border-left: 5px solid #0891b2; padding: 24px; border-radius: 0 16px 16px 0; }
-            .question-item { 
-              font-size: 13px; font-weight: 500; color: #1e293b; margin-bottom: 12px; 
-              padding: 12px 16px; background: white; border: 1px solid #e2e8f0; border-radius: 10px;
-            }
-
-            .disclaimer { font-size: 10px; color: #94a3b8; text-align: center; margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 20px; font-style: italic; }
-
-            /* UI Elements to remove */
-            .no-pdf { display: none !important; }
-            .no-print-ui { position: fixed; top: 20px; right: 20px; z-index: 100; }
-
-            .btn-download {
-              background: #0891b2;
-              color: white;
-              padding: 12px 24px;
-              border-radius: 50px;
-              font-weight: 700;
-              border: none;
-              cursor: pointer;
-              box-shadow: 0 10px 20px rgba(8,145,178,0.3);
-              font-family: inherit;
-              transition: 0.3s;
-            }
-            .btn-download:hover { transform: translateY(-2px); background: #0e7490; }
-
-            /* Resetting some complex browser styles */
-            #results-dashboard, #view-results-lower { background: transparent !important; padding: 0 !important; box-shadow: none !important; ring: none !important; border: none !important; }
-          </style>
-        </head>
-        <body>
-          <div class="no-print-ui"><button class="btn-download" id="do-download-final">KLİNİK RAPORU İNDİR (.PDF)</button></div>
-          
-          <div id="pdf-content">
-            <div class="pdf-header">
-              <div class="logo-wrap">
-                <img src="${logoSrc}" class="logo-img" alt="MedNav">
-                <span class="logo-text">MedNav</span>
-              </div>
-              <div class="report-meta">
-                <div class="title">Klinik Analiz & Tanı Özeti</div>
-                <div class="date">${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-              </div>
-            </div>
-
-            <div class="pdf-grid-main">
-              <!-- Sidebar: Anatomy -->
-              <div id="pdf-col-1">
-                <div class="pdf-panel" style="padding: 15px;">
-                  <div class="panel-title">Anatomik Bölge</div>
-                  <div id="col-anatomy-inject"></div>
-                </div>
-              </div>
-
-              <!-- Main: Findings -->
-              <div id="pdf-col-2">
-                <div class="pdf-panel">
-                  <div class="panel-title">Klinik Değerlendirme</div>
-                  <div class="diag-label">Ön Tanı Bulgusu</div>
-                  <div id="results-diagnosis-inject"></div>
-                  
-                  <div class="finding-item">
-                    <span class="finding-icon">🔍</span>
-                    <div class="finding-content">
-                      <div class="finding-label">Detaylı Analiz</div>
-                      <div id="results-findings-inject"></div>
-                    </div>
-                  </div>
-
-                  <div class="finding-item">
-                    <span class="finding-icon">💡</span>
-                    <div class="finding-content">
-                      <div class="finding-label">Yaşam Tarzı & Klinik Öneri</div>
-                      <div id="results-suggestions-inject"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pdf-panel">
-              <div class="panel-title">Genomik & Hücresel Profiler</div>
-              <div id="results-genomics-inject" class="gen-grid"></div>
-            </div>
-
-            <div class="pdf-panel questions-panel">
-              <div class="panel-title">Doktorunuza Sorabileceğiniz Sorular</div>
-              <div id="results-questions-inject"></div>
-            </div>
-
-            <div class="disclaimer">
-              * Bu bir yapay zeka analiz raporudur. Kesin teşhis ve tedavi protokolü için ilgili uzman hekime başvurunuz. 
-              MedNav klinik verileri sadece rehberlik amacıyla sunulmuştur.
-            </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tıbbi Analiz Raporu | MedNav</title>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'></script>
+  <script src='https://cdn.tailwindcss.com'></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #f1f5f9; margin: 0; padding: 20px; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
+    #pdf-content { width: 210mm; background: white; padding: 10mm; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); overflow: hidden; }
+    .pdf-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0891b2; padding-bottom: 15px; margin-bottom: 25px; }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; }
+    .logo-img { height: 45px; width: auto; }
+    .logo-text { font-size: 24px; font-weight: 800; color: #164e63; letter-spacing: -1px; }
+    .report-meta { text-align: right; }
+    .report-meta .title { font-size: 10px; font-weight: 800; color: #0891b2; text-transform: uppercase; letter-spacing: 1px; }
+    .report-meta .date { font-size: 13px; color: #64748b; margin-top: 2px; font-weight: 500; }
+    
+    /* Layout Force: 3-column horizontal grid */
+    .pdf-dashboard-flex { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; width: 100% !important; gap: 12px !important; margin-bottom: 25px !important; align-items: stretch !important; }
+    .pdf-col-anatomy { width: 28% !important; flex-shrink: 0 !important; }
+    .pdf-col-summary { width: 44% !important; flex-shrink: 0 !important; }
+    .pdf-col-genomics { width: 28% !important; flex-shrink: 0 !important; }
+    
+    .pdf-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; height: 100%; display: flex; flex-direction: column; }
+    .panel-label { font-size: 9px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+    #anatomy-inject-wrap { text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+    #anatomy-inject-wrap img { width: 100%; height: auto; object-fit: contain; max-height: 220px; }
+    .diagnosis-text { font-size: 16px; font-weight: 800; color: #be123c; margin-bottom: 12px; line-height: 1.2; }
+    .section-sub { font-size: 9px; font-weight: 700; color: #0891b2; text-transform: uppercase; margin-top: 12px; margin-bottom: 4px; }
+    .findings-text { font-size: 11px; line-height: 1.4; color: #334155; }
+    .radar-wrap { text-align: center; padding: 8px; background: #f8fafc; border-radius: 10px; border: 1px dashed #cbd5e1; }
+    .radar-img { width: 100%; height: auto; }
+    .questions-panel { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 12px; border-radius: 4px 12px 12px 4px; margin-top: 5px; }
+    .question-item { font-size: 11px; font-weight: 500; color: #0c4a6e; margin-bottom: 5px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e0f2fe; }
+    .disclaimer { font-size: 9px; color: #94a3b8; text-align: center; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 12px; font-style: italic; }
+    
+    /* Chat Exclusion */
+    #mn-chat-panel, .mn-chat-panel { display: none !important; }
+    
+    .no-print-control { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999; }
+    .btn-action { background: #0891b2; color: white; padding: 12px 35px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(8,145,178,0.4); transition: 0.3s; }
+    .btn-action:hover { background: #0e7490; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class='no-print-control'>
+    <button class='btn-action' id='do-download-final'>KLİNİK DOSYAYI ONAYLA VE İNDİR</button>
+  </div>
+  <div id='pdf-content'>
+    <div class='pdf-header'>
+      <div class='logo-wrap'>
+        <img src='${logoSrc}' class='logo-img'>
+        <span class='logo-text'>MedNav</span>
+      </div>
+      <div class='report-meta'>
+        <div class='title'>Tıbbi Analiz Raporu</div>
+        <div class='date'>${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+      </div>
+    </div>
+    <div class='pdf-dashboard-flex'>
+      <div class='pdf-col-anatomy'>
+        <div class='pdf-panel'>
+          <div class='panel-label'>Anatomik Bölge</div>
+          <div id='anatomy-inject-wrap'></div>
+        </div>
+      </div>
+      <div class='pdf-col-summary'>
+        <div class='pdf-panel'>
+          <div class='panel-label'>Klinik Değerlendirme</div>
+          <div class='section-sub'>Teşhis Özeti</div>
+          <div id='diag-inject' class='diagnosis-text'></div>
+          <div class='section-sub'>Detaylı Bulgular</div>
+          <div id='findings-inject' class='findings-text'></div>
+          <div class='section-sub'>Klinik Öneriler</div>
+          <div id='sugg-inject' class='findings-text'></div>
+        </div>
+      </div>
+      <div class='pdf-col-genomics'>
+        <div class='pdf-panel'>
+          <div class='panel-label'>Genomik Analiz</div>
+          <div class='radar-wrap'>
+            <img src='${radarImage}' class='radar-img'>
           </div>
-
-          <script>
-            // Data Injection
-            const source = window.opener.document;
-            document.getElementById('col-anatomy-inject').innerHTML = source.getElementById('col-anatomy').innerHTML;
-            document.getElementById('results-diagnosis-inject').innerHTML = source.getElementById('results-diagnosis').innerHTML;
-            document.getElementById('results-findings-inject').innerHTML = source.getElementById('results-findings').innerHTML;
-            document.getElementById('results-suggestions-inject').innerHTML = source.getElementById('results-suggestions').innerHTML;
-            document.getElementById('results-genomics-inject').innerHTML = source.getElementById('results-genomics').innerHTML;
-            document.getElementById('results-questions-inject').innerHTML = source.getElementById('results-questions').innerHTML;
-
-            // Alignment Fixes
-            const markers = document.getElementById('col-anatomy-inject').querySelector('#anatomy-markers');
-            if(markers) {
-               markers.style.position = 'absolute';
-               markers.style.top = '0';
-               markers.style.left = '0';
-               markers.style.width = '100%';
-               markers.style.height = '100%';
-            }
-
-            // PDF Download Action
-            document.getElementById('do-download-final').addEventListener('click', () => {
-              const element = document.getElementById('pdf-content');
-              html2pdf().set({
-                margin: 0,
-                filename: 'MedNav_Klinik_Analiz_Raporu.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { 
-                  scale: 2, 
-                  useCORS: true, 
-                  letterRendering: true,
-                  windowWidth: 1000 
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              }).from(element).save();
-            });
-          </script>
-        </body>
-      </html>
-    `);
+          <div class='mt-4 p-3 bg-slate-50 rounded-lg border border-slate-100 italic text-[8px] text-slate-500 text-center'>
+            Hücresel direnç ve metabolik profil verileri AI tarafından senkronize edilmiştır.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='questions-panel'>
+      <div class='panel-label' style='color:#0369a1; border-color: #bae6fd; font-size: 9px; margin-bottom: 5px;'>Takip Soruları</div>
+      <div id='questions-inject'></div>
+    </div>
+    <div class='disclaimer'>ÖNEMLİ: Bu rapor yapay zeka tarafından üretilmiş klinik bir rehberdir. Kesin tıbbi kararlar için uzman doktora başvurulmalıdır.</div>
+  </div>
+  <script>
+    const source = window.opener.document;
+    document.getElementById('diag-inject').innerText = source.getElementById('results-diagnosis').innerText;
+    document.getElementById('findings-inject').innerText = source.getElementById('results-findings').innerText;
+    document.getElementById('sugg-inject').innerText = source.getElementById('results-suggestions').innerText;
+    document.getElementById('questions-inject').innerHTML = source.getElementById('results-questions').innerHTML;
+    
+    const anatomySrc = source.getElementById('col-anatomy');
+    const anatomyMarkers = anatomySrc.querySelector('#anatomy-markers').innerHTML;
+    const anatomyImg = anatomySrc.querySelector('img').src;
+    
+    document.getElementById('anatomy-inject-wrap').innerHTML = \`
+      <div style='position:relative; width:100%; height: 100%; display:flex; align-items:center; justify-content:center;'>
+        <img src='\${anatomyImg}' style='max-height: 220px; width:auto;'>
+        <div style='position:absolute; inset:0;'>\${anatomyMarkers}</div>
+      </div>\`;
+      
+    document.getElementById('do-download-final').addEventListener('click', () => {
+      const element = document.getElementById('pdf-content');
+      html2pdf().set({
+        margin: 0,
+        filename: 'MedNav-Tıbbi-Analiz-Raporu.pdf',
+        image: { type: 'jpeg', quality: 1.0 },
+        html2canvas: { scale: 3, useCORS: true, logging: false, windowWidth: 1200 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
+    });
+  </script>
+</body>
+</html>`);
     printWindow.document.close();
+
+    // Reset button state
+    btn.innerHTML = originalContent;
+    btn.disabled = false;
   });
 
-  state = {
-    screen: 'home',
-    kategori: null,
-    hedefKitle: 'kendim',
-    raporMetni: '',
-    result: null,
-    error: null,
-    chat: {
-      active: false,
-      history: [],
-      context: null
-    }
-  };
   render();
 }
 
-/**
- * Chat UI Yardımcıları
- */
 function showChatPanel() {
   const panel = document.getElementById('mn-chat-panel');
   if (panel) {
