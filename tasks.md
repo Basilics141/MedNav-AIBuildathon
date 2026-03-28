@@ -1,93 +1,56 @@
-# Med-Nav — Geliştirme Görev Listesi
+# MedNav - Geliştirme Görev Listesi
 
-Bu liste [prd.md](./prd.md) ürün gereksinim belgesine göre oluşturulmuştur. Görevleri sırayla veya fazlara bölerek ilerleyebilirsiniz.
-
----
-
-## Faz 0: Proje altyapısı
-
-- [x] **0.1** Teknoloji yığınına karar ver (ör. React + Vite, Next.js veya PRD’de geçen Lovable akışına uygun stack).
-- [x] **0.2** Depoyu ve temel klasör yapısını oluştur (`src`, bileşenler, stiller, ortam değişkenleri).
-- [x] **0.3** `.env` / `.env.example` ile **`VITE_CLAUDE_API_KEY`** (Anthropic Console; Vite `VITE_` öneki) tanımlamasını ekle; anahtarı asla repoya commit etme.
-- [x] **0.4** Vite ile `npm run dev` / `npm run build` doğrulandı; ESLint ayarlı.
+Bu liste [prd.md](./prd.md) Ürün gereksinim belgesine göre oluşturulmuştur. Görevleri sırayla fazlara bölerek ilerleyebilirsiniz.
 
 ---
 
-## Faz 1: Claude (Anthropic) entegrasyonu ve veri sözleşmesi
+## Faz 0: Proje Altyapısı ve Temel Arayüz
 
-- [x] **1.1** Anthropic **Messages API** (REST) ile çağrı yapısını kur; model: **`claude-3-haiku-20240307`**. Tarayıcıdan doğrudan istekte **zorunlu** header: `anthropic-dangerous-direct-browser-access: true` ([tech-stack.md](./tech-stack.md)). API anahtarı: `import.meta.env.VITE_CLAUDE_API_KEY`.
-- [x] **1.2** Yapay zekadan **yalnızca geçerli JSON** dönecek şekilde sistem + kullanıcı prompt’larını tasarla (`src/js/prompts.js`).
-- [x] **1.3** JSON şeması PRD ile hizalı; dokümantasyon: `src/analysis-result.schema.json`, doğrulama: `src/js/parse.js`.
-  - 8. sınıf seviyesinde özet metni
-  - Terim listesi: `{ terim, aciklama }` (tooltip için)
-  - Anatomi haritası: organ/bölge kodu — görüntüleme raporları için
-  - Tam olarak **3 adet** doktora sorulacak soru
-- [x] **1.4** Hedef kitleye göre **empati motoru** (`kendim` / `cocuk` / `yasli`) — `buildSystemPrompt`.
-- [x] **1.5** Rapor kategorisi modele iletilir; görüntüleme dışında `anatomi_organ_kodu` `parse.js` içinde null’a zorlanır.
-- [x] **1.6** API / ağ / JSON hatalarında kullanıcıya anlaşılır mesaj; form açık kalır (yeniden deneme).
+- [x] **0.1** Temel `index.html`, `style.css` ve `app.js` dosyalarını oluştur.
+- [x] **0.2** Giriş ekranını tasarla: 3'lü Kategori seçici (Tahlil, Görüntüleme, Patoloji), Persona seçici (Kendim, Çocuğum, Yaşlı Yakınım) ve metin giriş kutusu (textarea) ekle.
+- [x] **0.3** "Analiz Et" butonunu ve yükleniyor (loading) animasyonunu entegre et.
 
 ---
 
-## Faz 2: Ekran 1 — Karşılama ve veri girişi
+## Faz 1: Yapay Zeka (Llama 3 / Groq) Entegrasyonu
 
-- [x] **2.1** Ana başlık: *“Anlaşılmaz tıbbi raporları, sağlık adımlarına dönüştürün.”*
-- [x] **2.2** Üç kategori kartı: **Tahlil**, **Görüntüleme**, **Patoloji** — tıklanabilir, seçim durumu belirgin.
-- [x] **2.3** Kategori seçilince geniş **metin alanı**; metin state’te tutulur.
-- [x] **2.4** Kişiselleştirme: **Kendim / Çocuğum / Yaşlı Yakınım** (radyo görünümlü etiketler).
-- [x] **2.5** Birincil aksiyon metni: **Analiz Et** (PRD Ekran 1 ile uyumlu).
-- [x] **2.6** Boş metin / eksik seçim doğrulaması.
-- [x] **2.7** Yükleme ekranı (animasyonlu).
-- [x] **2.8** Başarıda tek sayfada sonuç (dashboard) görünümü.
-
----
-
-## Faz 3: Ekran 2 — Sonuç paneli (dashboard) düzeni
-
-- [x] **3.1** Üç sütunlu layout: sol (SVG), orta (özet), sağ (sorular + yazdır).
-- [x] **3.2** Responsive: mobilde özet üstte, harita ve sorular altta.
-- [x] **3.3** Orta blokta özet kutusu ve tipografi.
+- [x] **1.1** Groq API bağlantısını kur ve `.env` (veya config) içine API anahtarını yerleştir.
+- [x] **1.2** Sistem prompt'unu (System Message) ayarla: Kullanıcının seçtiği Kategori ve Persona'ya göre (örn: çocuk için pedagojik, yaşlı için şefkatli) yapay zekanın üslubunu dinamik olarak değiştirecek mantığı yaz.
+- [x] **1.3** Yapay zekadan `JSON` formatında yapılandırılmış çıktı almayı sağla:
+  - Şefkatli özet metni
+  - Terim listesi (Tooltip için kelime ve açıklamalar)
+  - 3 adet doktora sorulacak soru
+  - 5 temel sağlık metriği puanı
+  - Hedef organ/bölge kodu
 
 ---
 
-## Faz 4: Orta blok — özet ve tooltip sözlük
+## Faz 2: Sonuç Ekranı (Dashboard) - Sol ve Orta Panel
 
-- [x] **4.1** Terimler özet içinde **vurgulanır** (`wrapTermsInSummary`).
-- [x] **4.2** Açıklama **`title`** ile hover tooltip (temel erişilebilirlik).
-- [x] **4.3** Eşleşme **büyük/küçük harf duyarsız** regex ile.
-
----
-
-## Faz 5: Sol blok — insan silüeti (SVG) haritası
-
-- [x] **5.1** İnsan **SVG** silüeti; bölgeler `data-organ` kodlarıyla.
-- [x] **5.2** Dönen koda göre bölge renklenir; `genel` için çerçeve vurgusu.
-- [x] **5.3** Görüntüleme dışı kategorilerde harita soluklaştırılır + bilgi metni.
+- [x] **2.1** İnsan vücudu SVG'sini sayfaya ekle ve 27 organın koordinatlarını içeren `anatomy_data.js` dosyasını oluştur.
+- [x] **2.2** API'den dönen "Hedef Organ" verisine göre kırmızı işaretçiyi (marker) doğru koordinatta göster. Bulunamayan organlar için "Yakınsama / Güvenli Bölge" mantığını uygula.
+- [x] **2.3** Orta panelde API'den gelen şefkatli özeti ekrana bas.
+- [x] **2.4** Zor kelimelerin üzerine gelindiğinde Türkçe anlamını gösteren "Tooltip" (bilgi kutucuğu) CSS ve JS yapısını kur.
+- [x] **2.5** Doktora sorulacak 3 soruyu liste halinde UI üzerine yerleştir.
 
 ---
 
-## Faz 6: Sağ blok — doktor soruları ve PDF
+## Faz 3: Sonuç Ekranı (Dashboard) - Sağ Panel (Örümcek Harita)
 
-- [x] **6.1** “Doktorunuza soracağınız 3 soru” başlığı ve 3 madde.
-- [x] **6.2** **PDF / Yazdır** — tarayıcı yazdırma ile çıktı (`@media print`, `.no-print`).
-- [x] **6.3** Üst bilgilendirme / sorumluluk notu metni sonuç sayfasında.
-
----
-
-## Faz 7: Kalite, güvenlik ve yayın
-
-- [ ] **7.1** Kullanıcı metninin loglanmaması veya PII minimizasyonu politikası (GDPR / KVKK farkındalığı).
-- [ ] **7.2** Rate limiting veya basit kötüye kullanım önlemi (sunucu tarafı varsa).
-- [ ] **7.3** Temel manuel test senaryoları: üç kategori, üç hedef kitle, kısa/uzun metin, hatalı API.
-- [ ] **7.4** Lovable veya seçilen platformda **deploy** ve ortam değişkenlerinin üretimde ayarlanması.
+- [x] **3.1** Chart.js (veya benzeri bir kütüphane) kullanarak sağ panele "Örümcek Haritası" (Radar Chart) ekle.
+- [x] **3.2** API'den dönen Bağışıklık, Metabolizma, Enerji gibi 5 sağlık metriği puanını bu grafiğe bağlayarak dinamik olarak çizdir.
 
 ---
 
-## İsteğe bağlı sonraki adımlar (PRD dışı iyileştirme)
+## Faz 4: Llama-3 Asistan ve PDF Döküm Modülü
 
-- [ ] Geçmiş analizleri yerel depolama ile son X kayıt (gizlilik onayı ile).
-- [ ] Çoklu dil (TR/EN) arayüz.
-- [ ] Daha zengin anatomi haritası veya çoklu vurgu (birden fazla organ kodu şeması).
+- [x] **4.1** Ekranın alt kısmına bir sohbet arayüzü ekle ve chatbot'u, raporun bağlamını ve seçilen personayı unutmayacak şekilde API'ye bağla.
+- [x] **4.2** `html2pdf.js` kütüphanesini projeye dahil et ve "PDF İndir" işlevini yaz.
+- [x] **4.3** PDF render edilirken kırmızı işaretçi animasyonunun bozulmasını önlemek için, işaretçiyi gizleyen ve yerine "BÖLGESEL ODAK: [ORGAN ADI]" yazan Türkçe metin etiketleme sistemini uygula.
 
 ---
 
-*Son güncelleme: PRD ile senkron, proje başlangıcı için görev sıralaması önerilir.*
+## Faz 5: Son Kontroller ve Yayınlama
+
+- [x] **5.1** Tasarımı mobil uyumlu (responsive) hale getir ve hata denetimlerini (boş metin girilmesi vb.) yap.
+- [x] **5.2** Projeyi Lovable (veya Netlify/Vercel) üzerinden internete yayınla.

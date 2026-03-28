@@ -41,6 +41,37 @@ export const anatomyMap = {
     right_knee: { top: '78%', left: '37%' }     // Sağ Diz
 };
 
+export const anatomyNamesTr = {
+    brain: "BEYİN",
+    eyes: "GÖZLER",
+    throat: "BOĞAZ / BADEMCİK",
+    thyroid: "TİROİD",
+    heart: "KALP",
+    lungs: "AKCİĞERLER",
+    lung_right: "SAĞ AKCİĞER",
+    lung_left: "SOL AKCİĞER",
+    liver: "KARACİĞER",
+    stomach: "MİDE",
+    pancreas: "PANKREAS",
+    gallbladder: "SAFRA KESESİ",
+    kidneys: "BÖBREKLER",
+    kidney_right: "SAĞ BÖBREK",
+    kidney_left: "SOL BÖBREK",
+    intestines: "İNCE BAĞIRSAKLAR",
+    colon: "KOLON",
+    appendix: "APANDİSİT",
+    bladder: "MESANE",
+    pelvis: "PELVİS / LEĞEN KEMİĞİ",
+    uterus: "RAHİM",
+    prostate: "PROSTAT",
+    spine: "OMURGA",
+    left_shoulder: "SOL OMUZ",
+    right_shoulder: "SAĞ OMUZ",
+    left_knee: "SOL DİZ",
+    right_knee: "SAĞ DİZ",
+    general: "GENEL"
+};
+
 // Yapay zeka bilinmeyen bir organ döndürürse hata vermemesi için güvenli (fallback) fonksiyon
 export function getCoordinates(organKey) {
     if (!organKey) return { top: '10%', left: '50%' };

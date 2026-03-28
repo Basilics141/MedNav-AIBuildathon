@@ -1,26 +1,33 @@
-# Kullanıcı Akışı (User Flow): Med-Nav
+# MedNav - Kullanıcı Akışı (User Flow)
 
-Bu belge, bir kullanıcının Med-Nav uygulamasına girdiği andan itibaren yaşayacağı deneyimi adım adım listelemektedir.
+Bu belge, bir kullanıcının MedNav uygulamasına girdiği andan PDF çıktısını aldığı ana kadar yaşadığı deneyimi adım adım listelemektedir.
 
-## Adım 1: Karşılama ve Kategori Seçimi
-* **Kullanıcı Ne Görür?** Temiz, güven veren ve karmaşadan uzak bir ana sayfa. Ekranda "Anlaşılmaz tıbbi raporları, sağlık adımlarına dönüştürün" başlığı yer alır. Altında üç büyük kategori kartı bulunur: "Kan ve Laboratuvar Tahlili", "Görüntüleme Raporu (MR/Röntgen)" ve "Patoloji Raporu".
-* **Kullanıcı Ne Yapar?** Elindeki raporun türüne en uygun olan kategori kartına tıklar.
+## 1. Karşılama ve Seçim Ekranı
+* **Kullanıcı Ne Görür?** Temiz, güven veren ve tıbbi karmaşadan uzak bir giriş arayüzü. Ekranda 3 adet kategori kartı (Tahlil, Görüntüleme, Patoloji) ve "Bu rapor kimin için?" sorusunu soran bir Persona seçici (Kendim, Çocuğum, Yaşlı Yakınım) bulunur.
+* **Kullanıcı Ne Yapar?** Elindeki tıbbi rapora en uygun kategoriyi seçer ve raporun kime ait olduğunu (personayı) işaretler.
 
-## Adım 2: Veri Girişi ve Kişiselleştirme
-* **Kullanıcı Ne Görür?** Seçtiği kategoriye özel geniş bir metin yapıştırma kutusu ve altında "Bu Rapor Kimin İçin?" sorusuyla birlikte üç adet seçenek (Kendim İçin, Çocuğum İçin, Yaşlı Yakınım İçin).
-* **Kullanıcı Ne Yapar?** Hastane portalından veya e-Nabız'dan kopyaladığı karmaşık rapor metnini kutuya yapıştırır. Uygulamanın dilini (şefkatli, özet odaklı vb.) ayarlamak için hedef kitleyi seçer ve "Raporumu Çevir" butonuna basar.
+## 2. Veri Girişi
+* **Kullanıcı Ne Görür?** "Hastane çıktısı veya e-Nabız metnini buraya kopyalayın" yazan geniş bir metin kutusu ve altında "Analiz Et" butonu.
+* **Kullanıcı Ne Yapar?** Anlamadığı, karmaşık tıbbi terimlerle dolu hastane raporunu kopyalayıp bu kutuya yapıştırır ve "Analiz Et" butonuna tıklar.
 
-## Adım 3: İşlem (Yüklenme Durumu)
-* **Kullanıcı Ne Görür?** Ekrandaki metin kutusu kaybolur, yerine tatlı bir yüklenme animasyonu (örneğin atan bir kalp veya steteskop ikonu) ve "Raporunuz Şefkatle Çevriliyor..." yazısı gelir.
-* **Kullanıcı Ne Yapar?** Arka planda Anthropic Claude API'nin (`claude-3-haiku-20240307`) raporu analiz edip yapılandırılmış JSON verisi üretmesini birkaç saniye bekler.
+## 3. Yapay Zeka İşlem Süreci
+* **Kullanıcı Ne Görür?** Ekranda profesyonel bir yükleniyor (loading) animasyonu belirir. "Yapay zeka raporunuzu inceliyor..." gibi rahatlatıcı bir mesaj çıkar.
+* **Sonuç Ne Olur?** Arka planda Llama 3 (Groq API) devreye girer. Metni analiz eder, personaya uygun üslubu belirler, anatomik koordinatları hesaplar ve sağlık metriklerini puanlar.
 
-## Adım 4: Sonuç Paneli (Dashboard)
-* **Kullanıcı Ne Görür?** Sayfa, 3 bloğa ayrılmış modern bir kontrol paneline dönüşür.
-    * **Sol Blok:** İnsan vücudu silüeti. (Örneğin raporda dizden bahsediliyorsa, silüetin diz kısmı renkli olarak parlar).
-    * **Orta Blok:** Raporun 8. sınıf seviyesinde, anlaşılır bir özeti. Metin içindeki zor tıbbi kelimeler renklidir.
-    * **Sağ Blok:** "Doktorunuza Soracağınız 3 Soru" listesi ve "PDF Olarak İndir" butonu.
-* **Kullanıcı Ne Yapar?** Özeti okur. Orta bloktaki renkli, zor kelimelerin üzerine faresini götürerek (hover) açılan küçük baloncuklardaki (tooltip) Türkçe açıklamaları okur. Görsel haritayı inceler.
+## 4. Sonuç Ekranı (Klinik Dashboard)
+* **Kullanıcı Ne Görür?** Saniyeler içinde 3 ana bölmeli, interaktif bir sonuç panosu açılır:
+    * **Sol Bölme:** İnsan anatomisi figürü ve tam sorunlu organın üzerinde parlayan kırmızı bir hedef halkası.
+    * **Orta Bölme:** Seçtiği personaya uygun (örn: şefkatli veya pedagojik) yazılmış, Latince kelimelerden arındırılmış bir ön teşhis özeti. Özetteki bazı kelimelerin altı çizilidir. Hemen altında "Doktorunuza Sorabileceğiniz 3 Soru" listesi yer alır.
+    * **Sağ Bölme:** Hastanın Metabolizma, Bağışıklık, Enerji gibi 5 sağlık değerini gösteren dinamik bir "Örümcek Haritası" (Radar Chart).
+* **Kullanıcı Ne Yapar?** Kendi dilinde yazılmış metni rahatça okur. Altı çizili zor tıbbi terimlerin üzerine faresini getirir (hover).
+* **Sonuç Ne Olur?** Üzerine geldiği kelimenin Türkçe ve anlaşılır açıklaması küçük bir bilgi kutucuğunda (tooltip) anında belirir. 
 
-## Adım 5: Aksiyon ve Çıkış
-* **Kullanıcı Ne Görür?** Sağ bloktaki "PDF Olarak İndir" butonu.
-* **Kullanıcı Ne Yapar?** Bir sonraki randevusunda unutmamak için bu butona tıklar. Uygulama, özeti ve doktor sorularını temiz bir PDF dosyası olarak cihaza kaydeder. Kullanıcı, raporunu anlamış ve ne yapacağını bilir bir şekilde uygulamadan ayrılır.
+## 5. Sağlık Asistanı ile Etkileşim
+* **Kullanıcı Ne Görür?** Ekranın en altında "Llama-3 Sağlık Asistanı" adında bir sohbet kutusu (chatbot) bulunur.
+* **Kullanıcı Ne Yapar?** Özeti okuduktan sonra aklına takılan spesifik bir soruyu (Örn: "Beslenmemde nelere dikkat etmeliyim?") buraya yazar.
+* **Sonuç Ne Olur?** Asistan, kullanıcının raporunu ve kimin için sorduğunu bilerek, bağlamdan kopmadan kişiselleştirilmiş anlık bir cevap verir.
+
+## 6. PDF Çıktısı Alma (Final)
+* **Kullanıcı Ne Görür?** Ekranın üst köşesinde "PDF İndir" butonu.
+* **Kullanıcı Ne Yapar?** Doktor randevusuna giderken bu değerli bilgileri yanında götürmek için butona tıklar.
+* **Sonuç Ne Olur?** Sistem, interaktif kırmızı işaretçiyi gizleyip yerine "BÖLGESEL ODAK: [TÜRKÇE ORGAN ADI]" yazan resmi bir etiket koyarak, tüm bu Dashboard'u jilet gibi tasarlanmış, tıbbi standartlara uygun A4 formatında bir PDF belgesi olarak cihazına indirir. Kullanıcı stressiz ve bilinçli bir şekilde uygulamadan ayrılır.

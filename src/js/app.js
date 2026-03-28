@@ -4,28 +4,28 @@ import { sendChatMessage } from '../agents/chatAgent.js';
 import { renderBodyMap } from './body-map.js';
 import { escapeHtml, wrapTermsInSummary } from './ui-helpers.js';
 import logoUrl from '../assets/logo.png';
-import { getCoordinates } from '../anatomy_data.js';
+import { getCoordinates, anatomyNamesTr } from '../anatomy_data.js';
 import { updateRadarChart } from './radarChart.js';
 
 const KATEGORILER = [
   {
     id: 'tahlil',
     title: 'Tahlil',
-    subtitle: 'Kan, idrar ve diğer biyokimyasal laboratuvar verilerinin yapay zeka destekli detaylı analizi, anomali tespiti ve referans aralığı kontrolü.',
+    subtitle: 'Kan, idrar ve hormon gibi laboratuvar sonuçlarınızı yapay zeka ile analiz edip referans aralıklarına göre anlaşılır bir dille değerlendirir.',
     accent: 'tahlil',
     fa: 'fa-vial',
   },
   {
     id: 'goruntuleme',
     title: 'Görüntüleme',
-    subtitle: 'MR, Tomografi (BT) ve X-Ray radyolojik görüntülerinin yapısal analizi; doku kontrastı, lezyon boyutlandırma ve anatomik kesit incelemelerinin raporlanması.',
+    subtitle: 'MR, Tomografi, Röntgen ve Ultrason raporlarınızı okuyarak vücudunuzdaki yapısal durumları ve bulguları net bir şekilde özetler.',
     accent: 'goruntuleme',
     fa: 'fa-notes-medical',
   },
   {
     id: 'patoloji',
     title: 'Patoloji',
-    subtitle: 'Hücresel düzeydeki biyopsi materyallerinin histopatolojik ve immunohistokimyasal değerlendirmesi; malignite düzeyleri, hücre atipisi ve doku diferansiyasyonunun yapay zeka ile incelenmesi.',
+    subtitle: 'Biyopsi ve parça alınma işlemlerine ait karmaşık hücresel raporları inceleyerek doku sağlığı hakkında sade ve anlaşılır bilgiler sunar.',
     accent: 'patoloji',
     fa: 'fa-microscope',
   },
@@ -373,6 +373,7 @@ function populateResultsUI(data) {
   if (markersContainer) {
     markersContainer.innerHTML = '';
     const organCode = data.anatomi_organ_kodu || "liver";
+    markersContainer.dataset.organ = organCode;
     const coords = getCoordinates(organCode);
     
     const marker = document.createElement('div');
@@ -496,8 +497,31 @@ export function initApp(root) {
     
     .pdf-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; height: 100%; display: flex; flex-direction: column; }
     .panel-label { font-size: 9px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
-    #anatomy-inject-wrap { text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+    #anatomy-inject-wrap { text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 200px; position: relative; }
     #anatomy-inject-wrap img { width: 100%; height: auto; object-fit: contain; max-height: 220px; }
+    
+    /* Focus Label for PDF */
+    .anatomy-focus-label { 
+      display: none; 
+      margin-bottom: 20px;
+      text-align: center; 
+      font-size: 13px; 
+      font-weight: 800; 
+      color: #be123c; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      padding: 8px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 8px;
+    }
+    body.pdf-rendering .anatomy-focus-label { display: block !important; }
+
+    /* Hide marker for PDF to ensure professional presentation */
+    body.pdf-rendering .pulsing-marker {
+      display: none !important;
+    }
+
     .diagnosis-text { font-size: 16px; font-weight: 800; color: #be123c; margin-bottom: 12px; line-height: 1.2; }
     .section-sub { font-size: 9px; font-weight: 700; color: #0891b2; text-transform: uppercase; margin-top: 12px; margin-bottom: 4px; }
     .findings-text { font-size: 11px; line-height: 1.4; color: #334155; }
@@ -568,6 +592,8 @@ export function initApp(root) {
   </div>
   <script>
     const source = window.opener.document;
+    const trMap = ${JSON.stringify(anatomyNamesTr)};
+    
     document.getElementById('diag-inject').innerText = source.getElementById('results-diagnosis').innerText;
     document.getElementById('findings-inject').innerText = source.getElementById('results-findings').innerText;
     document.getElementById('sugg-inject').innerText = source.getElementById('results-suggestions').innerText;
@@ -577,21 +603,43 @@ export function initApp(root) {
     const anatomyMarkers = anatomySrc.querySelector('#anatomy-markers').innerHTML;
     const anatomyImg = anatomySrc.querySelector('img').src;
     
+    // Extract organ key for fallback label
+    const organKey = (source.getElementById('anatomy-markers').dataset.organ || 'general').toLowerCase().trim();
+    const organNameTr = trMap[organKey] || "GENEL";
+    
     document.getElementById('anatomy-inject-wrap').innerHTML = \`
-      <div style='position:relative; width:100%; height: 100%; display:flex; align-items:center; justify-content:center;'>
-        <img src='\${anatomyImg}' style='max-height: 220px; width:auto;'>
-        <div style='position:absolute; inset:0;'>\${anatomyMarkers}</div>
+      <div style='display:flex; flex-direction:column; align-items:center; width:100%; height:100%;'>
+        <div class='anatomy-focus-label'>BÖLGESEL ODAK: \${organNameTr}</div>
+        <div style='position:relative; flex:1; display:flex; align-items:center; justify-content:center;'>
+          <img src='\${anatomyImg}' style='max-height: 220px; width:auto;'>
+          <div style='position:absolute; inset:0;'>\${anatomyMarkers}</div>
+        </div>
       </div>\`;
       
-    document.getElementById('do-download-final').addEventListener('click', () => {
+    document.getElementById('do-download-final').addEventListener('click', async () => {
+      const btnDownload = document.getElementById('do-download-final');
+      const originalText = btnDownload.innerText;
+      btnDownload.innerText = 'PDF OLUŞTURULUYOR...';
+      btnDownload.disabled = true;
+
+      document.body.classList.add('pdf-rendering');
+      
       const element = document.getElementById('pdf-content');
+      
+      // Small delay for class application
+      await new Promise(r => setTimeout(r, 150));
+
       html2pdf().set({
         margin: 0,
         filename: 'MedNav-Tıbbi-Analiz-Raporu.pdf',
         image: { type: 'jpeg', quality: 1.0 },
         html2canvas: { scale: 3, useCORS: true, logging: false, windowWidth: 1200 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(element).save();
+      }).from(element).save().then(() => {
+        document.body.classList.remove('pdf-rendering');
+        btnDownload.innerText = originalText;
+        btnDownload.disabled = false;
+      });
     });
   </script>
 </body>

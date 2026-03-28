@@ -1353,6 +1353,11 @@
 }
 
 /* —— Precise Anatomical Marker Refinement —— */
+/* Freeze marker for PDF snapshot */
+body.pdf-rendering .pulsing-marker {
+  display: none !important;
+}
+
 .pulsing-marker {
   width: 52px !important;       /* Reverted to original prominent size */
   height: 52px !important;      /* Reverted to original prominent size */

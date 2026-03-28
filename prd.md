@@ -1,37 +1,26 @@
-# PRD: Med-Nav (Bütüncül Sağlık Navigatörü)
+# MedNav - PRD (Ürün Gereksinim Belgesi)
 
-## 1. Projenin Özeti
-Med-Nav, hastaların karmaşık tıbbi raporlarını (tahlil, röntgen, patoloji) kendi anlama seviyelerine göre sadeleştiren, tıbbi jargonu açıklayan ve bir sonraki doktor randevusu için eyleme geçirilebilir sorular üreten mini bir web uygulamasıdır.
+## 1. Uygulamanın Amacı (Ne Yapıyoruz?)
+MedNav, hastaneden alınan ve içinde anlaşılmaz Latince kelimeler bulunan tıbbi raporları, herkesin anlayabileceği basit bir Türkçe'ye çeviren bir web uygulamasıdır. Amacımız, hastaların "Acaba neyim var?" korkusunu yenip, doktor karşısına bilinçli ve stressiz çıkmalarını sağlamaktır.
 
-## 2. Kullanıcı Ne Yapar? (Kullanıcı Deneyimi)
-* **Kategori Seçimi:** Uygulamaya girer ve elindeki raporun türünü seçer (Örn: Kan Tahlili, Görüntüleme Raporu).
-* **Veri Girişi ve Hedef Kitle Seçimi:** Kopyaladığı karmaşık rapor metnini büyük bir metin kutusuna yapıştırır. Kutunun altında uygulamanın kime hitap edeceğini seçer ("Kendim İçin", "Çocuğum İçin", "Yaşlı Yakınım İçin").
-* **Analiz İsteği:** "Raporumu Çevir" butonuna basar.
-* **Sonuçları İnceleme:** Ekrana gelen modern kontrol panelinde (dashboard) raporun anlaşılır özetini okur. Metindeki zor kelimelerin üzerine fareyle gelerek (hover) basit anlamlarını görür. Eğer bir MR/Röntgen raporuysa, ekrandaki insan vücudu çizimi (SVG) üzerinde hastalıklı bölgenin renklendiğini fark eder.
-* **Aksiyon Alma:** Sayfanın sağında yapay zekanın ürettiği "Doktorunuza Soracağınız 3 Soru" listesini alır ve dilerse PDF olarak indirir.
+## 2. Kimler Kullanacak? (Hedef Kitle)
+Tıp doktoru olmayan, karmaşık sağlık terimlerini anlamadığı için endişelenen standart vatandaşlar. Özellikle küçük çocuğu veya yaşlı anne/babası için endişelenen ve onların tahlil/MR sonuçlarını anlamaya çalışan hasta yakınları.
 
-## 3. Yapay Zeka (AI) Ne Yapar? (Arka Plan Mantığı)
-Bu uygulamada yapay zeka (**Claude**, Anthropic), Anthropic API üzerinden alınan API anahtarı ile entegre edilir ve sistemin "kalbi" olarak çalışır. Üretimde kullanılan model: **`claude-3-haiku-20240307`**.
-* **Empati Motoru:** Kullanıcının seçtiği hedef kitleye göre (örn: çocuksa ebeveyni panikletmeyen şefkatli bir dil) Sistem Mesajını (Prompt) ayarlar.
-* **Yapılandırılmış Veri (JSON) Üretimi:** Claude, metni okuduktan sonra arayüzün anlayabileceği düzenli bir JSON veri paketi gönderir. Bu paketin içinde şunlar vardır:
-  * Raporun 8. sınıf seviyesinde özeti.
-  * Vurgulanacak tıbbi terimler ve karşılıkları.
-  * İnteraktif insan anatomisi haritasında renklenecek organın kodu (Örn: `sol_akciger`).
-  * Doktora sorulacak 3 eyleme geçirilebilir soru.
-* **Formatlama:** AI, bu veriyi doğrudan ekrandaki şık kutucuklara ve görsel bileşenlere yerleşecek şekilde hazırlayıp Frontend'e (ön yüze) iletir.
+## 3. Ekranlar ve Kullanıcının Yapacakları (Adım Adım Kullanım)
+Uygulama temel olarak çok sade bir giriş ekranı ve detaylı bir sonuç panosundan (Dashboard) oluşur:
 
-## 4. Hangi Ekranlar Olacak?
-Uygulama, görsel olarak zengin ancak Lovable ile saniyeler içinde yayınlanabilecek 2 ana ekrandan oluşacaktır.
+* **Adım 1 (Veri Girişi):** Kullanıcı siteye girer. Raporun türünü (Tahlil, Görüntüleme, Patoloji) ve **kimin için** olduğunu (Kendim, Çocuğum, Yaşlı Yakınım) seçer. Hastane raporunu metin kutusuna yapıştırıp "Analiz Et" butonuna basar.
+* **Adım 2 (Sonuç Ekranı):** Saniyeler içinde karşısına şu bölümlerden oluşan bir ekran gelir:
+    * **İnsan Haritası:** Sol tarafta bir insan vücudu çizimi vardır. Raporda hangi organda sorun varsa, o organın üzerinde kırmızı bir ışık yanar.
+    * **Şefkatli Özet ve Sözlük:** Orta kısımda raporun basit bir özeti yazar. Fare ile zor kelimelerin üzerine gelince kelimenin Türkçe anlamı küçük bir bilgi kutucuğunda (tooltip) belirir.
+    * **Örümcek Haritası:** Sağ tarafta hastanın bağışıklık, enerji, metabolizma gibi durumlarını gösteren 5 köşeli bir genel "Sağlık Grafiği" bulunur.
+    * **Doktora Sorulacak 3 Soru:** Hastanın doktor randevusunda sorması gereken en kritik 3 soru hazır olarak listelenir.
+* **Adım 3 (Sohbet ve İndirme):** Kullanıcı sayfanın en altındaki asistanla (Chatbot) raporu hakkında yazışarak aklındaki diğer soruları sorabilir veya tüm bu güzel ekranı tek tıkla şık bir "PDF" belgesi olarak bilgisayarına indirebilir.
 
-### Ekran 1: Karşılama ve Veri Girişi Ekranı
-* **Başlık:** "Anlaşılmaz tıbbi raporları, sağlık adımlarına dönüştürün."
-* **Kategori Kartları:** Tahlil, Görüntüleme ve Patoloji olarak ayrılmış 3 şık, tıklanabilir kart.
-* **Girdi Alanı:** Kategori seçilince beliren geniş metin kutusu.
-* **Kişiselleştirme Butonları:** "Kendim / Çocuğum / Yaşlı Yakınım" seçenekleri (Radyo butonları veya sekmeler).
-* **Aksiyon Butonu:** "Analiz Et" butonu. Tıklandığında tatlı bir yükleme animasyonu çıkar.
+## 4. Yapay Zeka Arka Planda Ne İş Yapacak? (AI'ın Rolü)
+* **Karakter (Agent) Rolü:** Yapay zeka düz bir robot gibi çeviri yapmaz. Rapor çocuğa aitse ebeveyni rahatlatan pedagojik bir dille, yaşlıya aitse çok saygılı ve şefkatli bir dille ("Kıymetli büyüğümüz...") konuşur.
+* **Koordinat Bulucu:** Raporu okuyup hastalığın vücudun neresinde olduğunu anlar ve haritada o noktayı işaretler.
+* **Rehberlik:** Hastanın hekimle rahat iletişim kurabilmesi için rapora özel 3 mantıklı soru üretir ve anlık sohbet asistanı olarak soruları yanıtlar.
 
-### Ekran 2: Sonuç Paneli (Dashboard)
-Bu ekran 3 ana bloğa bölünmüş modern bir yapıdır:
-* **Sol Blok (Görsel Harita):** İnsan silüeti (SVG). Raporun içeriğine göre ilgili organ/bölge renkli olarak parlar.
-* **Orta Blok (Çeviri ve Sözlük):** Raporun sade özeti. Tıbbi kelimelerin üzeri renklidir, fareyle üzerine gelince açıklama baloncuğu (tooltip) açılır.
-* **Sağ Blok (Eylem Planı):** "Doktorunuza Sorun" başlığı altında 3 madde. Altında "PDF Olarak İndir" butonu.
+## 5. Başarı Kriteri (Uygulamanın Çalıştığını Nasıl Anlarız?)
+Bir kullanıcının karmaşık bir raporu sisteme yapıştırdığında; yapay zekanın seçilen kişiye (çocuk, yetişkin, yaşlı) uygun bir dille özet çıkarması, haritada doğru organı şaşırmadan işaretlemesi, 3 mantıklı soru üretmesi ve en sonunda kullanıcının tüm bu sayfayı bozulmadan tıbbi bir PDF belgesi olarak indirebilmesi.
