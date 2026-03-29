@@ -76,7 +76,7 @@ export function updateRadarChart(riskLevel) {
       responsive: true,
       maintainAspectRatio: false,
       layout: {
-        padding: isMobile ? { left: 10, right: 10, top: 0, bottom: 0 } : 0
+        padding: isMobile ? { left: 15, right: 15, top: 10, bottom: 10 } : 10
       },
       scales: {
         r: {
@@ -84,8 +84,9 @@ export function updateRadarChart(riskLevel) {
           grid: { color: 'rgba(0,0,0,0.1)' },
           pointLabels: {
             color: '#1f2937',
+            padding: isMobile ? 5 : 12,
             font: { 
-              size: isMobile ? 11 : 14, 
+              size: isMobile ? 10.5 : 14, 
               weight: '700', 
               family: "'Inter', sans-serif" 
             }

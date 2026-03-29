@@ -1458,15 +1458,16 @@ body.pdf-rendering .pulsing-marker {
     width: 100% !important;
     max-width: 100% !important;
     min-height: 350px !important;
-    padding: 10px 25px !important; /* Increased horizontal padding for labels */
+    padding: 15px 5px !important; /* Aggressive scale for larger chart */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+    overflow: visible !important; /* Ensure labels aren't clipped */
   }
   
   #healthRadarChart {
     width: 100% !important;
-    max-width: 96% !important; /* Sweet spot: large enough to fill space, small enough for labels */
+    max-width: 98% !important; /* Maximized for size while staying within bounds */
     height: auto !important;
     margin: 0 auto !important;
   }
