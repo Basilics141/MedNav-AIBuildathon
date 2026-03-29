@@ -49,8 +49,6 @@ export function updateRadarChart(riskLevel) {
     generateValue()  // Toksin Atımı
   ];
 
-  const isMobile = window.innerWidth < 768;
-
   if (radarChartInstance) {
     radarChartInstance.destroy();
   }
@@ -75,20 +73,13 @@ export function updateRadarChart(riskLevel) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: {
-        padding: isMobile ? { left: 10, right: 10, top: 0, bottom: 0 } : 0
-      },
       scales: {
         r: {
           angleLines: { color: 'rgba(0,0,0,0.1)' },
           grid: { color: 'rgba(0,0,0,0.1)' },
           pointLabels: {
             color: '#1f2937',
-            font: { 
-              size: isMobile ? 11 : 14, 
-              weight: '700', 
-              family: "'Inter', sans-serif" 
-            }
+            font: { size: 14, weight: '700', family: "'Inter', sans-serif" }
           },
           ticks: { display: false, stepSize: 20 },
           min: 0,

@@ -1,0 +1,49 @@
+{
+  "$comment": "Med-Nav — Claude çıktısı için hedef JSON (PRD / tasks 1.3). Açıklama amaçlı; runtime doğrulama parse.js içinde.",
+  "type": "object",
+  "required": [
+    "ozet",
+    "terimler",
+    "anatomi_organ_kodu",
+    "doktor_sorulari"
+  ],
+  "properties": {
+    "ozet": {
+      "type": "string",
+      "description": "Yaklaşık 8. sınıf düzeyinde Türkçe özet"
+    },
+    "terimler": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "terim",
+          "aciklama"
+        ],
+        "properties": {
+          "terim": {
+            "type": "string"
+          },
+          "aciklama": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "anatomi_organ_kodu": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Yalnızca görüntüleme kategorisinde dolu; aksi halde null"
+    },
+    "doktor_sorulari": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

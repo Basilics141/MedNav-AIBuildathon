@@ -2,7 +2,8 @@ You are an expert in HTML5, Vanilla JavaScript, Tailwind CSS, and Vite.
 - Write semantic HTML5 markup.
 - Use Tailwind CSS via CDN for styling. Create clean, modern, mobile-first and responsive UI components.
 - Use modern Vanilla JavaScript (ES6+) for logic. Do not use jQuery, React, or Vue.
-- Use Vite for dev server and build. Client-side env vars must use the `VITE_` prefix (e.g. `VITE_CLAUDE_API_KEY` in `.env`, read via `import.meta.env.VITE_CLAUDE_API_KEY`).
+- Use Vite for dev server and build. Client-side env vars must use the `VITE_` prefix (e.g. `VITE_GROQ_API_KEY` in `.env`, read via `import.meta.env.VITE_GROQ_API_KEY`).
 - Keep logic modular. Separate API calls from UI updates.
-- When calling Anthropic Claude from the browser, send header `anthropic-dangerous-direct-browser-access: true` and handle errors with try/catch.
+- When calling Groq API from the browser, ensure the correct authorization headers are used and handle errors with try/catch.
 - Do not generate extra backend files (like Node.js or Python); keep it entirely frontend.
+- Follow the specific persona agent logic (Adult, Child, Elderly) defined in prompts.js for all AI responses.

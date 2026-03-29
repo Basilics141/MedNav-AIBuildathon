@@ -366,129 +366,114 @@
         <div id="mn-global-actions" class="flex items-center gap-4"></div>
       </div>
     </header>
-    <main class="flex-grow">
-      <div id="view-input">
-        <div id="app" class="mn-root relative z-10 w-full"></div>
+    <div id="view-input">
+      <div id="app" class="mn-root relative z-10 w-full"></div>
+    </div>
+
+    <!-- Results Dashboard View -->
+    <!-- Results Dashboard View (Restoration v5) -->
+    <div id="view-results" class="hidden px-12 pb-20 no-print">
+      <div id="results-action-bar" class="w-full max-w-7xl mx-auto mb-8 p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-sm flex items-center justify-center gap-6">
+        <button id="btn-reset" class="px-10 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="text-2xl transition-transform group-hover:-translate-x-1">←</span>
+          <span>Yeni Raporu İncele</span>
+        </button>
+        <button id="btn-download-pdf" class="px-10 py-4 bg-lavender-600 hover:bg-lavender-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group">
+          <svg class="w-6 h-6 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Raporu PDF İndir</span>
+        </button>
       </div>
-
-      <!-- Results Dashboard View -->
-      <!-- Results Dashboard View (Restoration v5) -->
-      <div id="view-results" class="hidden px-12 pb-20 no-print">
-        <div id="results-action-bar" class="w-full max-w-7xl mx-auto mb-8 p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-sm flex items-center justify-center gap-6">
-          <button id="btn-reset" class="px-10 py-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2">
-            <span class="text-2xl transition-transform group-hover:-translate-x-1">←</span>
-            <span>Yeni Raporu İncele</span>
-          </button>
-          <button id="btn-download-pdf" class="px-10 py-4 bg-lavender-600 hover:bg-lavender-700 text-white font-semibold text-lg rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group">
-            <svg class="w-6 h-6 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            <span>Raporu PDF İndir</span>
-          </button>
-        </div>
-        
-        <div id="pdf-export-area" class="w-full">
-          <!-- Main Dashboard: Anatomy, Findings, Genomics -->
-          <div id="results-dashboard" class="mt-6 p-12 rounded-[2.5rem] mn-holo-panel mn-medical-grid relative overflow-hidden ring-1 ring-white/20">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              <!-- Column 1: Anatomical Map -->
-              <div id="col-anatomy" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl flex flex-col items-center justify-center">
-                <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Anatomik Harita</h3>
-                <div class="relative w-fit mx-auto">
-                  <img src="/anatomi.png" alt="Clinical Anatomy" class="block max-w-full h-auto object-contain z-0 drop-shadow-2xl">
-                  <div id="anatomy-markers" class="absolute inset-0 z-10 w-full h-full pointer-events-none"></div>
-                </div>
+      
+      <div id="pdf-export-area" class="w-full">
+        <!-- Main Dashboard: Anatomy, Findings, Genomics -->
+        <div id="results-dashboard" class="mt-6 p-12 rounded-[2.5rem] mn-holo-panel mn-medical-grid relative overflow-hidden ring-1 ring-white/20">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- Column 1: Anatomical Map -->
+            <div id="col-anatomy" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl flex flex-col items-center justify-center">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Anatomik Harita</h3>
+              <div class="relative w-fit mx-auto">
+                <img src="/anatomi.png" alt="Clinical Anatomy" class="block max-w-full h-auto object-contain z-0 drop-shadow-2xl">
+                <div id="anatomy-markers" class="absolute inset-0 z-10 w-full h-full pointer-events-none"></div>
               </div>
+            </div>
 
-              <!-- Column 2: Clinical Summary -->
-              <div id="col-summary" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
-                <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Klinik Özet</h3>
-                <div class="bg-white/60 p-8 rounded-3xl border border-white/40 shadow-inner space-y-10">
-                  <div class="flex items-start gap-5">
-                    <div class="w-5 h-5 rounded-full bg-red-600 mt-2 shadow-[0_0_20px_rgba(220,38,38,0.6)] animate-pulse"></div>
-                    <div>
-                      <p class="font-semibold text-slate-600 text-base mb-2 uppercase tracking-widest">Ön Klinik Teşhis (AI)</p>
-                      <p id="results-diagnosis" class="text-2xl font-semibold text-red-600 tracking-tight leading-tight"></p>
-                    </div>
+            <!-- Column 2: Clinical Summary -->
+            <div id="col-summary" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Klinik Özet</h3>
+              <div class="bg-white/60 p-8 rounded-3xl border border-white/40 shadow-inner space-y-10">
+                <div class="flex items-start gap-5">
+                  <div class="w-5 h-5 rounded-full bg-red-600 mt-2 shadow-[0_0_20px_rgba(220,38,38,0.6)] animate-pulse"></div>
+                  <div>
+                    <p class="font-semibold text-slate-600 text-base mb-2 uppercase tracking-widest">Ön Klinik Teşhis (AI)</p>
+                    <p id="results-diagnosis" class="text-2xl font-semibold text-red-600 tracking-tight leading-tight"></p>
                   </div>
-                  <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
-                    <span class="text-4xl">🔍</span>
-                    <div class="flex-1">
-                      <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Detaylı Bulgular</p>
-                      <div id="results-findings" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
-                    </div>
+                </div>
+                <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
+                  <span class="text-4xl">🔍</span>
+                  <div class="flex-1">
+                    <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Detaylı Bulgular</p>
+                    <div id="results-findings" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
                   </div>
-                  <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
-                    <span class="text-4xl">💡</span>
-                    <div class="flex-1">
-                      <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Yaşam Tarzı Önerileri</p>
-                      <div id="results-suggestions" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
-                    </div>
+                </div>
+                <div class="flex items-start gap-6 border-t border-slate-200/40 pt-10">
+                  <span class="text-4xl">💡</span>
+                  <div class="flex-1">
+                    <p class="font-semibold text-slate-600 text-base mb-3 uppercase tracking-widest">Yaşam Tarzı Önerileri</p>
+                    <div id="results-suggestions" class="text-slate-800 text-lg leading-relaxed font-medium"></div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Column 3: Genomics Analysis -->
-              <div id="col-genomics" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
-                <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Genomik Analiz</h3>
-                <div id="radar-container" class="relative w-full aspect-square flex items-center justify-center p-4 bg-white/10 rounded-[2rem] border border-white/20 transition-all duration-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  <canvas id="healthRadarChart"></canvas>
+            <!-- Column 3: Genomics Analysis -->
+            <div id="col-genomics" class="bg-white/40 backdrop-blur-md p-10 rounded-3xl border border-white/40 shadow-xl">
+              <h3 class="text-2xl font-semibold tracking-tight text-slate-900 mb-8 text-center w-full block uppercase font-display">Genomik Analiz</h3>
+              <div id="radar-container" class="relative w-full aspect-square flex items-center justify-center p-4 bg-white/10 rounded-[2rem] border border-white/20 transition-all duration-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                <canvas id="healthRadarChart"></canvas>
+              </div>
+
+              <!-- Integrated AI Chat Assistant (Upgraded Theme) -->
+              <div id="mn-chat-panel" class="w-full mt-8 h-[450px] bg-white/70 backdrop-blur-2xl rounded-[2rem] border-2 border-cyan-400/40 shadow-[0_0_15px_rgba(34,211,238,0.3)] flex flex-col overflow-hidden transition-all duration-700 opacity-0 transform translate-y-4 pointer-events-none">
+                <!-- Chat Header -->
+                <div class="p-5 bg-white/30 border-b border-cyan-400/20 flex flex-col items-center justify-center text-center">
+                  <h4 class="text-xl font-bold text-cyan-500 tracking-tight font-display uppercase">Llama-3 Sağlık Asistanı</h4>
+                  <div class="w-12 h-0.5 bg-cyan-400/50 mt-1 rounded-full"></div>
                 </div>
 
-                <!-- Integrated AI Chat Assistant (Upgraded Theme) -->
-                <div id="mn-chat-panel" class="w-full mt-8 h-[450px] bg-white/70 backdrop-blur-2xl rounded-[2rem] border-2 border-cyan-400/40 shadow-[0_0_15px_rgba(34,211,238,0.3)] flex flex-col overflow-hidden transition-all duration-700 opacity-0 transform translate-y-4 pointer-events-none">
-                  <!-- Chat Header -->
-                  <div class="p-5 bg-white/30 border-b border-cyan-400/20 flex flex-col items-center justify-center text-center">
-                    <h4 class="text-xl font-bold text-cyan-500 tracking-tight font-display uppercase">Llama-3 Sağlık Asistanı</h4>
-                    <div class="w-12 h-0.5 bg-cyan-400/50 mt-1 rounded-full"></div>
+                <!-- Chat Messages List -->
+                <div id="chat-messages-list" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
+                  <div class="bg-cyan-50/50 border border-cyan-100 p-4 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                    Merhaba! Tahlil sonuçlarınızı inceledim. Raporunuz hakkında sormak istediğiniz detaylı bir soru var mı? Size yardımcı olmaktan mutluluk duyarım.
                   </div>
+                </div>
 
-                  <!-- Chat Messages List -->
-                  <div id="chat-messages-list" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
-                    <div class="bg-cyan-50/50 border border-cyan-100 p-4 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
-                      Merhaba! Tahlil sonuçlarınızı inceledim. Raporunuz hakkında sormak istediğiniz detaylı bir soru var mı? Size yardımcı olmaktan mutluluk duyarım.
-                    </div>
-                  </div>
-
-                  <!-- Chat Input -->
-                  <div class="p-4 bg-white/40 border-t border-white/20">
-                    <div class="relative flex items-center gap-2">
-                      <input id="chat-user-input" type="text" placeholder="Asistan ile konuşun..." class="flex-1 bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/10 transition-all">
-                      <button id="chat-send-btn" class="w-10 h-10 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl flex items-center justify-center shadow-md transition-all active:scale-95">
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
-                      </button>
-                    </div>
+                <!-- Chat Input -->
+                <div class="p-4 bg-white/40 border-t border-white/20">
+                  <div class="relative flex items-center gap-2">
+                    <input id="chat-user-input" type="text" placeholder="Asistan ile konuşun..." class="flex-1 bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/10 transition-all">
+                    <button id="chat-send-btn" class="w-10 h-10 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl flex items-center justify-center shadow-md transition-all active:scale-95">
+                      <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Lower Panel: Doctor Questions -->
-          <div id="view-results-lower" class="w-full mt-8 p-10 bg-white/20 backdrop-blur-xl rounded-[2.5rem] mn-holo-panel border border-white/30 shadow-2xl transition-all duration-700">
-            <div class="flex items-center gap-4 mb-8 border-b border-white/20 pb-4 uppercase font-display">
-              <span class="text-4xl">💬</span>
-              <h3 class="text-3xl font-semibold text-slate-900 tracking-tighter">Doktorunuza Sorun</h3>
-            </div>
-            <div id="results-questions" class="grid grid-cols-1 md:grid-cols-1 gap-6"></div>
+        <!-- Lower Panel: Doctor Questions -->
+        <div id="view-results-lower" class="w-full mt-8 p-10 bg-white/20 backdrop-blur-xl rounded-[2.5rem] mn-holo-panel border border-white/30 shadow-2xl transition-all duration-700">
+          <div class="flex items-center gap-4 mb-8 border-b border-white/20 pb-4 uppercase font-display">
+            <span class="text-4xl">💬</span>
+            <h3 class="text-3xl font-semibold text-slate-900 tracking-tighter">Doktorunuza Sorun</h3>
           </div>
+          <div id="results-questions" class="grid grid-cols-1 md:grid-cols-1 gap-6"></div>
         </div>
-      </div>
-    </main>
 
-    <footer class="mt-auto py-12 text-center border-t border-gray-100/10 bg-white/5 backdrop-blur-md no-print">
-      <div class="max-w-7xl mx-auto px-12">
-        <p class="text-slate-600 font-semibold tracking-wide text-lg">
-          MedNav © 2026 | <span class="text-cyan-600">İkbal Reyhan Mendi</span>
-        </p>
-        <p class="text-xs text-slate-400 mt-3 italic max-w-2xl mx-auto leading-relaxed">
-          Birbirini Geliştiren Kadınlar AI Buildathon 2026 kapsamında Llama 3 & Groq API kullanılarak geliştirilmiştir.
-        </p>
-        <div class="mt-6 flex justify-center gap-6 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-          <i class="fa-solid fa-shield-halved text-xl"></i>
-          <i class="fa-solid fa-microscope text-xl"></i>
-          <i class="fa-solid fa-dna text-xl"></i>
-        </div>
       </div>
-    </footer>
+
+      </div>
+    </div>
 
     <!-- SPA Loading Screen (Clean Modern Health-Tech) -->
     <div id="view-loading" class="hidden fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-md overflow-hidden">

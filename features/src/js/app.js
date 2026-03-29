@@ -430,7 +430,6 @@ function bindGlobalEvents() {
 
 export function initApp(root) {
   rootEl = root;
-  console.log('MedNav: Initializing app...', { rootEl });
   bindGlobalEvents();
 
   document.getElementById('btn-reset')?.addEventListener('click', () => {
@@ -452,11 +451,7 @@ export function initApp(root) {
     if (e.key === 'Enter') handleChatSubmit();
   });
 
-  const btnPdf = document.getElementById('btn-download-pdf');
-  console.log('MedNav: PDF Button found:', !!btnPdf);
-
-  btnPdf?.addEventListener('click', async function() {
-    console.log('MedNav: PDF Export triggered');
+  document.getElementById('btn-download-pdf')?.addEventListener('click', async function() {
     const btn = this;
     const originalContent = btn.innerHTML;
     
@@ -650,17 +645,6 @@ export function initApp(root) {
 </body>
 </html>`);
     printWindow.document.close();
-
-    try {
-      // PDF Window Generation...
-      await new Promise(r => setTimeout(r, 100)); // Buffer
-    } catch (err) {
-      console.error('MedNav: PDF Export Prep Failed:', err);
-      // Reset button state
-      btn.innerHTML = originalContent;
-      btn.disabled = false;
-      return;
-    }
 
     // Reset button state
     btn.innerHTML = originalContent;
