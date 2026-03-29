@@ -482,14 +482,16 @@ export function initApp(root) {
 <html>
 <head>
   <title>Tıbbi Analiz Raporu | MedNav</title>
-  <!-- Force library load in head with explicit defer handling -->
+  <!-- Force a desktop viewport on mobile devices to prevent layout squeezing -->
+  <meta name="viewport" content="width=1200">
   <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js' crossorigin='anonymous'></script>
   <script src='https://cdn.tailwindcss.com'></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     * { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { background: #f1f5f9; margin: 0; padding: 20px; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
-    #pdf-content { width: 210mm; background: white; padding: 10mm; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); overflow: hidden; }
+    /* Force 1200px body width on all devices to match desktop rendering exactly */
+    body { background: #f1f5f9; margin: 0; padding: 20px; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; min-width: 1200px; }
+    #pdf-content { width: 210mm; min-width: 210mm; background: white; padding: 10mm; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); overflow: hidden; }
     .pdf-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0891b2; padding-bottom: 15px; margin-bottom: 25px; }
     .logo-wrap { display: flex; align-items: center; gap: 10px; }
     .logo-img { height: 45px; width: auto; }
@@ -635,8 +637,8 @@ export function initApp(root) {
       
       const element = document.getElementById('pdf-content');
       
-      // Small delay for class application
-      await new Promise(r => setTimeout(r, 150));
+      // Increased delay to allow the 1200px desktop viewport to stabilize on mobile
+      await new Promise(r => setTimeout(r, 600));
 
       // Log for diagnostic with version stamp to confirm code update
       console.log('[v7-FIX] MedNav: Starting html2pdf generation...');

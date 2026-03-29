@@ -16,7 +16,7 @@ export const anatomyMap = {
     // --- KARIN BÖLGESİ (ÜST) ---
     liver: { top: '33%', left: '47%' },         // Karaciğer (Sağ üst)
     stomach: { top: '36%', left: '53%' },       // Mide (Sol üst)
-    pancreas: { top: '42%', left: '50%' },      // Pankreas (Mide arkası)
+    pancreas: { top: '37%', left: '52%' },      // Pankreas (Mide arkası)
     gallbladder: { top: '35%', left: '45%' },   // Safra Kesesi (Karaciğer altı)
 
     // --- KARIN BÖLGESİ (ALT) ---
