@@ -307,13 +307,13 @@ async function runAnalyze() {
       kategori: state.kategori,
       hedefKitle: state.hedefKitle,
     });
-    
+
     populateResultsUI(result);
 
     if (viewLoading) viewLoading.classList.add('hidden');
     if (viewResults) viewResults.classList.remove('hidden');
     window.scrollTo(0, 0);
-    
+
     state.result = result;
     state.screen = 'dashboard';
     state.error = null;
@@ -337,7 +337,7 @@ function populateResultsUI(data) {
   const sorularEl = document.getElementById('results-questions');
 
   if (teshisEl) teshisEl.innerText = data.on_teshis;
-  
+
   if (bulgularEl) {
     let processedBulgular = data.detayli_bulgular;
     if (data.sozluk && data.sozluk.length > 0) {
@@ -375,7 +375,7 @@ function populateResultsUI(data) {
     const organCode = data.anatomi_organ_kodu || "liver";
     markersContainer.dataset.organ = organCode;
     const coords = getCoordinates(organCode);
-    
+
     const marker = document.createElement('div');
     marker.className = 'AnatomicalMap_marker__1 pulsing-marker absolute z-20 rounded-full border-red-600 flex items-center justify-center';
     marker.style.top = coords.top;
@@ -440,7 +440,7 @@ export function initApp(root) {
     if (textArea) textArea.value = '';
     state.raporMetni = '';
     state.screen = 'home';
-    
+
     hideChatPanel();
     state.chat.active = false;
     state.chat.history = [];
@@ -455,31 +455,35 @@ export function initApp(root) {
   const btnPdf = document.getElementById('btn-download-pdf');
   console.log('MedNav: PDF Button found:', !!btnPdf);
 
-  btnPdf?.addEventListener('click', async function() {
-    console.log('MedNav: PDF Export triggered');
-    const btn = this;
-    const originalContent = btn.innerHTML;
-    
-    // Visual feedback for preparation
-    btn.innerHTML = `<i class="fa-solid fa-sync fa-spin"></i> <span>Rapor Hazırlanıyor...</span>`;
-    btn.disabled = true;
+  if (btnPdf) {
+    btnPdf.addEventListener('click', async function (e) {
+      console.log('PDF Triggered');
+      e.preventDefault();
+      const btn = this;
+      const originalContent = btn.innerHTML;
 
-    // 1. Animation Delay: Wait for Radar Chart animations to finalize (2000ms)
-    await new Promise(resolve => setTimeout(resolve, 2000));
+      // Visual feedback for preparation
+      btn.innerHTML = `<i class="fa-solid fa-sync fa-spin"></i> <span>Rapor Hazırlanıyor...</span>`;
+      btn.disabled = true;
 
-    const radarCanvas = document.getElementById('healthRadarChart');
-    const radarImage = radarCanvas ? radarCanvas.toDataURL('image/png', 1.0) : '';
-    const logoSrc = window.location.origin + "/logo.png";
+      // 1. Animation Delay: Wait for Radar Chart animations to finalize (2000ms)
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const printWindow = window.open('', '_blank', 'width=1200,height=1400');
-    
-    // Use template literal for cleaner HTML injection and fix concatenation bugs
-    printWindow.document.write(`
+      const radarCanvas = document.getElementById('healthRadarChart');
+      const radarImage = radarCanvas ? radarCanvas.toDataURL('image/png', 1.0) : '';
+      // Use clear absolute URL for assets to prevent ERR_CONNECTION_REFUSED in about:blank
+      const logoSrc = window.location.protocol + "//" + window.location.host + "/logo.png";
+
+      const printWindow = window.open('', '_blank', 'width=1200,height=1400');
+
+      // Use template literal for cleaner HTML injection and fix concatenation bugs
+      printWindow.document.write(`
 <!DOCTYPE html>
 <html>
 <head>
   <title>Tıbbi Analiz Raporu | MedNav</title>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'></script>
+  <!-- Force library load in head with explicit defer handling -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js' crossorigin='anonymous'></script>
   <script src='https://cdn.tailwindcss.com'></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -634,14 +638,62 @@ export function initApp(root) {
       // Small delay for class application
       await new Promise(r => setTimeout(r, 150));
 
+      // Log for diagnostic with version stamp to confirm code update
+      console.log('[v7-FIX] MedNav: Starting html2pdf generation...');
+      
+      if (typeof html2pdf === 'undefined') {
+        console.error('[v7-FIX] MedNav: html2pdf library not loaded!');
+        alert('HATA: PDF kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.');
+        btnDownload.innerText = originalText;
+        btnDownload.disabled = false;
+        return;
+      }
+
       html2pdf().set({
         margin: 0,
-        filename: 'MedNav-Tıbbi-Analiz-Raporu.pdf',
+        filename: 'MedNav-Tibbi-Analiz-Raporu.pdf',
         image: { type: 'jpeg', quality: 1.0 },
-        html2canvas: { scale: 3, useCORS: true, logging: false, windowWidth: 1200 },
+        html2canvas: { 
+          scale: 3, 
+          useCORS: true, 
+          logging: true,
+          windowWidth: 1200,
+          allowTaint: true
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(element).save().then(() => {
+      }).from(element).toPdf().outputPdf('blob').then((blob) => {
+        console.log('[v7-FIX] MedNav: PDF Blob generated successfully.');
+        
+        try {
+          // Force download via <a> tag within the printWindow's document
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'MedNav-Tibbi-Analiz-Raporu.pdf';
+          link.style.display = 'none';
+          
+          document.body.appendChild(link);
+          link.click();
+          
+          // Double force: set location for browsers that block click
+          setTimeout(() => {
+            if (document.body.contains(link)) {
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }
+            console.log('[v7-FIX] MedNav: PDF download sequence complete.');
+          }, 500);
+        } catch (downloadErr) {
+          console.warn('[v7-FIX] Link download failed, trying standard .save() as fallback');
+          html2pdf().from(element).save();
+        }
+
         document.body.classList.remove('pdf-rendering');
+        btnDownload.innerText = originalText;
+        btnDownload.disabled = false;
+      }).catch(err => {
+        console.error('[v7-FIX] MedNav: html2pdf rendering failed:', err);
+        alert('HATA: PDF oluşturulurken teknik bir sorun oluştu: ' + err.message);
         btnDownload.innerText = originalText;
         btnDownload.disabled = false;
       });
@@ -649,23 +701,24 @@ export function initApp(root) {
   </script>
 </body>
 </html>`);
-    printWindow.document.close();
+      printWindow.document.close();
 
-    try {
-      // PDF Window Generation...
-      await new Promise(r => setTimeout(r, 100)); // Buffer
-    } catch (err) {
-      console.error('MedNav: PDF Export Prep Failed:', err);
+      try {
+        // PDF Window Generation...
+        await new Promise(r => setTimeout(r, 100)); // Buffer
+      } catch (err) {
+        console.error('MedNav: PDF Export Prep Failed:', err);
+        // Reset button state
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        return;
+      }
+
       // Reset button state
       btn.innerHTML = originalContent;
       btn.disabled = false;
-      return;
-    }
-
-    // Reset button state
-    btn.innerHTML = originalContent;
-    btn.disabled = false;
-  });
+    });
+  }
 
   render();
 }
