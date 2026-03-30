@@ -24,13 +24,12 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 ![Masaüstü 3](https://github.com/user-attachments/assets/a570c0fd-21aa-434f-993d-e5bb2e005eaf) 
 
 #### 📱 Mobil Görünümü:
-
+ 
 ![Mobil 1](https://github.com/user-attachments/assets/5752faa1-f097-4d0e-8a70-d527bd6839b8) 
-![Mobil 2](https://github.com/user-attachments/assets/5752faa1-f097-4d0e-8a70-d527bd6839b8) 
-![Mobil 3](https://github.com/user-attachments/assets/ebdc278f-5b55-4fff-a3ae-f83f9b783a6c)
-![Mobil 4](https://github.com/user-attachments/assets/433ce9e3-a3bb-4bf4-a4e7-45b27fed70a0)
-![Mobil 5](https://github.com/user-attachments/assets/e435dd68-d001-43bc-a48c-180e4bf5e0ce)
-![Mobil 6](https://github.com/user-attachments/assets/e5cb1d10-b221-4ddb-9559-51c0bdb0cbf5)
+![Mobil 2](https://github.com/user-attachments/assets/ebdc278f-5b55-4fff-a3ae-f83f9b783a6c)
+![Mobil 3](https://github.com/user-attachments/assets/433ce9e3-a3bb-4bf4-a4e7-45b27fed70a0)
+![Mobil 4](https://github.com/user-attachments/assets/e435dd68-d001-43bc-a48c-180e4bf5e0ce)
+![Mobil 5](https://github.com/user-attachments/assets/e5cb1d10-b221-4ddb-9559-51c0bdb0cbf5)
 
 
 ## 🛠️ Kullanılan Teknolojiler
