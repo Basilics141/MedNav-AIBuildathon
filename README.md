@@ -26,6 +26,7 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 - **Stil & Tasarım:** Tailwind CSS
 - **Kütüphaneler:** html2pdf.js, Chart.js 
 - **Deployment:** Netlify, GitHub
+​- **Geliştirme Ortamı & AI Asistanı:** Cursor IDE (Antigravity)
 
 ## ⚙️ Nasıl Çalıştırılır?
 1. Repoyu bilgisayarınıza klonlayın:
