@@ -18,6 +18,13 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 <img width="1919" height="907" alt="Ekran görüntüsü 1" src="https://github.com/user-attachments/assets/b400869f-babd-494d-b1e0-d21308378013" />
 <img width="1919" height="910" alt="Ekran görüntüsü 2" src="https://github.com/user-attachments/assets/63055162-6bd1-479f-b09e-9c79dc949cbe" />
 <img width="1917" height="949" alt="Ekran görüntüsü 3" src="https://github.com/user-attachments/assets/a570c0fd-21aa-434f-993d-e5bb2e005eaf" />
+![Screenshot_20260330_193824_Chrome](https://github.com/user-attachments/assets/75a7e603-9046-4cf2-82fa-56ef245fbd07)
+![Screenshot_20260330_193858_Chrome](https://github.com/user-attachments/assets/5752faa1-f097-4d0e-8a70-d527bd6839b8)
+![Screenshot_20260330_194411_Chrome](https://github.com/user-attachments/assets/ebdc278f-5b55-4fff-a3ae-f83f9b783a6c)
+![Screenshot_20260330_194421_Chrome](https://github.com/user-attachments/assets/433ce9e3-a3bb-4bf4-a4e7-45b27fed70a0)
+![Screenshot_20260330_194502_Chrome](https://github.com/user-attachments/assets/e435dd68-d001-43bc-a48c-180e4bf5e0ce)
+![Screenshot_20260330_195034_Chrome](https://github.com/user-attachments/assets/e5cb1d10-b221-4ddb-9559-51c0bdb0cbf5)
+
 
 
 ## 🛠️ Kullanılan Teknolojiler
