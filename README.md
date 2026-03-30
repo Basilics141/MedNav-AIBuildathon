@@ -21,10 +21,10 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 
 
 ## 🛠️ Kullanılan Teknolojiler
-- **Yapay Zeka:** Groq API (Meta Llama-3-70b-8192)
+- **Yapay Zeka:** Groq API (Meta Llama-3-70b-8192), Gemini Pro 3.1
 - **Frontend:** HTML5, Vanilla JavaScript, CSS3
 - **Stil & Tasarım:** Tailwind CSS
-- **Kütüphaneler:** html2pdf.js, Chart.js (veya kullanılan grafik kütüphanesi)
+- **Kütüphaneler:** html2pdf.js, Chart.js 
 - **Deployment:** Netlify, GitHub
 
 ## ⚙️ Nasıl Çalıştırılır?
