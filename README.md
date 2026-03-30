@@ -15,6 +15,23 @@ Sağlık verileri, hayatımızın en kritik bilgileri olmasına rağmen genellik
 
 Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayarak, yapay zekanın hastanın bilgi düzeyine göre empati kurabilmesini sağladım. Verileri sadece metin olarak sunmakla kalmadım; interaktif anatomik haritalar ve radar grafikleriyle görsel bir deneyime dönüştürdüm. Geliştirdiğim yazdırma algoritması sayesinde ise bu analizlerin kusursuz bir PDF'e dönüşmesini başardım. MedNav, karmaşık sistemleri herkes için erişilebilir ve şeffaf kılma tutkumun en somut yansımasıdır.
 
+### 🖼️ Ekran Görüntüleri
+
+#### 💻 Masaüstü Görünümü
+![Masaüstü Analiz] 
+![Masaüstü 1](https://github.com/user-attachments/assets/b400869f-babd-494d-b1e0-d21308378013) 
+![Masaüstü 2](https://github.com/user-attachments/assets/63055162-6bd1-479f-b09e-9c79dc949cbe) 
+![Masaüstü 3](https://github.com/user-attachments/assets/a570c0fd-21aa-434f-993d-e5bb2e005eaf) 
+
+#### 📱 Mobil Görünümü:
+
+![Mobil 1](https://github.com/user-attachments/assets/5752faa1-f097-4d0e-8a70-d527bd6839b8) 
+![Mobil 2](https://github.com/user-attachments/assets/5752faa1-f097-4d0e-8a70-d527bd6839b8) 
+![Mobil 3](https://github.com/user-attachments/assets/ebdc278f-5b55-4fff-a3ae-f83f9b783a6c)
+![Mobil 4](https://github.com/user-attachments/assets/433ce9e3-a3bb-4bf4-a4e7-45b27fed70a0)
+![Mobil 5](https://github.com/user-attachments/assets/e435dd68-d001-43bc-a48c-180e4bf5e0ce)
+![Mobil 6](https://github.com/user-attachments/assets/e5cb1d10-b221-4ddb-9559-51c0bdb0cbf5)
+
 <img width="1919" height="907" alt="Ekran görüntüsü 1" src="https://github.com/user-attachments/assets/b400869f-babd-494d-b1e0-d21308378013" />
 <img width="1919" height="910" alt="Ekran görüntüsü 2" src="https://github.com/user-attachments/assets/63055162-6bd1-479f-b09e-9c79dc949cbe" />
 <img width="1917" height="949" alt="Ekran görüntüsü 3" src="https://github.com/user-attachments/assets/a570c0fd-21aa-434f-993d-e5bb2e005eaf" />
