@@ -10,7 +10,7 @@ MedNav, karmaşık tıbbi verileri saniyeler içinde herkesin anlayabileceği sa
 - **Yayın Linki:** https://mednav-ai-analiz.netlify.app/
 - **Demo Video:** https://www.loom.com/share/c1984a476403404897623fedd519924b
 
-## 📖 Portfolyo ve Proje Hikayesi (Bonus)
+## 📖 Portfolyo ve Proje Hikayesi 
 Sağlık verileri, hayatımızın en kritik bilgileri olmasına rağmen genellikle soğuk ve anlaşılmaz tıbbi terimlerin ardına saklanmış durumdadır. Eğitim hayatımda algoritmaların ve yapay zekanın gücünü derinlemesine keşfettikçe, teknolojinin sadece ekrandaki sayılardan ibaret olmaması gerektiğine; doğrudan insan hayatına dokunan, karmaşık problemleri çözen bir köprü olması gerektiğine inandım. MedNav projesi de tam olarak bu mühendislik vizyonuyla doğdu.
 
 Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayarak, yapay zekanın hastanın bilgi düzeyine göre empati kurabilmesini sağladım. Verileri sadece metin olarak sunmakla kalmadım; interaktif anatomik haritalar ve radar grafikleriyle görsel bir deneyime dönüştürdüm. Geliştirdiğim yazdırma algoritması sayesinde ise bu analizlerin kusursuz bir PDF'e dönüşmesini başardım. MedNav, karmaşık sistemleri herkes için erişilebilir ve şeffaf kılma tutkumun en somut yansımasıdır.
