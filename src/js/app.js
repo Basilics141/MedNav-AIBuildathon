@@ -1,8 +1,8 @@
 import { analyzeReport } from './api.js';
 import { analyzeReportWithGroq } from '../agents/analyzerAgent.js';
+import { analyzeImageWithGemini } from '../agents/visionAgent.js';
 import { sendChatMessage } from '../agents/chatAgent.js';
-import { renderBodyMap } from './body-map.js';
-import { escapeHtml, wrapTermsInSummary } from './ui-helpers.js';
+import { escapeHtml } from './ui-helpers.js';
 import logoUrl from '../assets/logo.png';
 import { getCoordinates, anatomyNamesTr } from '../anatomy_data.js';
 import { updateRadarChart } from './radarChart.js';
@@ -36,6 +36,7 @@ let state = {
   kategori: null,
   hedefKitle: 'kendim',
   raporMetni: '',
+  uploadedFiles: [],  // Array of { file: File, base64: string, mimeType: string, name: string, size: number }
   result: null,
   error: null,
   chat: {
@@ -49,32 +50,8 @@ let rootEl = null;
 
 function render() {
   if (!rootEl) return;
-
-  if (state.screen === 'loading') {
-    rootEl.innerHTML = renderLoading();
-  } else if (state.screen === 'dashboard' && state.result) {
-    rootEl.innerHTML = renderDashboard();
-  } else {
-    rootEl.innerHTML = renderHome();
-  }
-
+  rootEl.innerHTML = renderHome();
   bindEvents();
-}
-
-function renderLoading() {
-  updateGlobalHeader('Analiz', false);
-  return `
-    <div class="mn-shell">
-      <main class="mn-loading">
-        <div class="mn-loading-orbit" aria-busy="true" aria-live="polite">
-          <div class="mn-loading-ring" aria-hidden="true"></div>
-          <div class="mn-loading-core" aria-hidden="true"><i class="fa-solid fa-heart-pulse mn-loading-fa"></i></div>
-        </div>
-        <p class="mn-loading-title">Raporunuz şefkatle çevriliyor…</p>
-        <p class="mn-loading-sub">Groq analiz ediyor; birkaç saniye sürebilir.</p>
-      </main>
-    </div>
-  `;
 }
 
 function renderHome() {
@@ -99,13 +76,60 @@ function renderHome() {
   `,
   ).join('');
 
+  const isVisionCategory = state.kategori != null;
+
+  // Build file upload zone HTML for vision categories
+  const fileUploadBlock = isVisionCategory ? `
+    <div class="mn-upload-zone">
+      <label class="mn-label text-xl font-bold text-slate-700 tracking-wide block mb-4">
+        <i class="fa-solid fa-file-image" style="margin-right: 0.4rem;"></i>GÖRSEL YÜKLE
+      </label>
+      <div class="mn-upload-dropzone" id="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up mn-upload-icon"></i>
+        <p class="mn-upload-text">Resim dosyanızı sürükleyip bırakın</p>
+        <p class="mn-upload-hint">veya dosya seçmek için tıklayın</p>
+        <div class="mn-upload-formats">
+          <i class="fa-solid fa-shield-check"></i>
+          <span>Desteklenen formatlar: PNG, JPG, JPEG, WEBP</span>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple hidden />
+      </div>
+      <div id="file-list" class="mn-file-list">
+        ${state.uploadedFiles.map((f, i) => {
+    const iconClass = 'mn-file-icon--png';
+    const iconFa = 'fa-file-image';
+    const sizeStr = f.size < 1024 * 1024
+      ? (f.size / 1024).toFixed(1) + ' KB'
+      : (f.size / (1024 * 1024)).toFixed(1) + ' MB';
+    return `
+          <div class="mn-file-item" data-file-index="${i}">
+            <div class="mn-file-icon ${iconClass}"><i class="fa-solid ${iconFa}"></i></div>
+            <div class="mn-file-info">
+              <div class="mn-file-name">${escapeHtml(f.name)}</div>
+              <div class="mn-file-size">${sizeStr}</div>
+            </div>
+            <button type="button" class="mn-file-remove" data-action="remove-file" data-file-index="${i}" title="Dosyayı kaldır">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>`;
+  }).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const textareaLabel = 'EK RAPOR METNİ (İSTEĞE BAĞLI)';
+  const textareaPlaceholder = 'İsterseniz ek rapor metni ekleyebilirsiniz… (Dosya yüklendiyse zorunlu değildir)';
+  const apiHint = 'Verileriniz Groq Llama API ile analiz edilir; saklanmaz.';
+
   const textBlock =
     state.kategori != null
       ? `
     <section class="mn-form-panel mn-glass-strong mn-holo-surface">
-      <label for="rapor-metni" class="mn-label text-xl font-bold text-slate-700 tracking-wide block mb-4">RAPOR METNİNİ YAPIŞTIRIN</label>
-      <textarea id="rapor-metni" name="rapor" rows="10" class="mn-textarea text-lg p-5 placeholder:text-slate-400"
-        placeholder="Hastane çıktısı veya e-Nabız metnini buraya kopyalayın…">${escapeAttr(state.raporMetni)}</textarea>
+      ${fileUploadBlock}
+
+      <label for="rapor-metni" class="mn-label text-xl font-bold text-slate-700 tracking-wide block mb-4" style="margin-top: 1.75rem">${textareaLabel}</label>
+      <textarea id="rapor-metni" name="rapor" rows="5" class="mn-textarea text-lg p-5 placeholder:text-slate-400"
+        placeholder="${textareaPlaceholder}">${escapeAttr(state.raporMetni)}</textarea>
 
       <fieldset class="mn-fieldset mt-8 border-t border-white/5 pt-8 pb-4">
         <legend class="mn-fieldset-legend text-xl font-bold text-slate-700 tracking-wide text-center w-full mb-8">BU RAPOR KİMİN İÇİN?</legend>
@@ -141,7 +165,7 @@ function renderHome() {
           <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
           Analiz Et
         </button>
-        <p class="mn-hint">Metin bizim sunucumuza gönderilmez; istek doğrudan Groq API ile yapılır.</p>
+        <p class="mn-hint">${apiHint}</p>
       </div>
     </section>
   `
@@ -175,52 +199,7 @@ function escapeAttr(s) {
     .replace(/</g, '&lt;');
 }
 
-function renderDashboard() {
-  const r = state.result;
-  const summaryHtml = wrapTermsInSummary(r.ozet, r.terimler);
-  const questions = r.doktor_sorulari
-    .map(
-      (q, i) => `
-    <li class="mn-q-item">
-      <span class="mn-q-num">${i + 1}</span>
-      <span>${escapeHtml(q)}</span>
-    </li>
-  `,
-    )
-    .join('');
 
-  const bodyMap = renderBodyMap(r.anatomi_organ_kodu, state.kategori);
-
-  updateGlobalHeader('Sonuç özeti', true);
-  return `
-    <div class="mn-dash print:bg-white w-full">
-      <main id="print-root" class="mn-dash-main">
-        <p class="mn-disclaimer print:block">
-          Bu çıktı bilgilendirme amaçlıdır; tanı veya tedavi yerine geçmez. Kararlarınızı mutlaka doktorunuzla paylaşın.
-        </p>
-        <div class="mn-dash-grid">
-          <section class="mn-dash-col-map">
-            ${bodyMap}
-          </section>
-          <section class="mn-dash-col-summary">
-            <div class="mn-panel mn-glass-strong mn-holo-surface mn-holo-surface--teal">
-              <h2 class="mn-panel-title">Anlaşılır özet</h2>
-              <div class="mn-prose">
-                <p>${summaryHtml}</p>
-              </div>
-            </div>
-          </section>
-          <section class="mn-dash-col-qa">
-            <div class="mn-panel mn-glass-strong mn-panel-qa mn-holo-surface mn-holo-surface--violet">
-              <h2 class="mn-panel-title mn-panel-title--accent">Doktorunuza soracağınız 3 soru</h2>
-              <ol class="mn-q-list">${questions}</ol>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-  `;
-}
 
 function bindEvents() {
   if (!rootEl) return;
@@ -238,6 +217,7 @@ function bindEvents() {
       if (kat) {
         state.kategori = kat;
         state.error = null;
+        state.uploadedFiles = [];
         render();
       }
     }
@@ -251,11 +231,21 @@ function bindEvents() {
       state.screen = 'home';
       state.result = null;
       state.error = null;
+      state.uploadedFiles = [];
       render();
     }
 
     if (action === 'print-pdf') {
       window.print();
+    }
+
+    // File remove button
+    if (action === 'remove-file') {
+      const idx = parseInt(btn.getAttribute('data-file-index'), 10);
+      if (!isNaN(idx) && idx >= 0 && idx < state.uploadedFiles.length) {
+        state.uploadedFiles.splice(idx, 1);
+        render();
+      }
     }
   };
 
@@ -273,6 +263,100 @@ function bindEvents() {
       state.raporMetni = t.value;
     }
   };
+
+  // --- File Upload Handling ---
+  const dropzone = rootEl.querySelector('#dropzone');
+  const fileInput = rootEl.querySelector('#file-input');
+
+  if (dropzone && fileInput) {
+    // Click to open file dialog
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // Drag & Drop events
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add('mn-dragover');
+    });
+
+    dropzone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('mn-dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('mn-dragover');
+      if (e.dataTransfer?.files) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+
+    // File input change
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files) {
+        handleFiles(fileInput.files);
+        fileInput.value = ''; // Reset so same file can be re-selected
+      }
+    });
+  }
+}
+
+/**
+ * Validates and processes uploaded files (images only).
+ * Reads each file as base64 via FileReader and stores in state.
+ */
+function handleFiles(fileList) {
+  const maxFileSize = 20 * 1024 * 1024; // 20MB limit per file
+
+  const validFiles = Array.from(fileList).filter(f => {
+    if (!f.type.startsWith('image/')) {
+      state.error = `"${f.name}" desteklenmeyen bir dosya formatı. Yalnızca resim dosyaları (PNG, JPG, WEBP) kabul edilir.`;
+      render();
+      return false;
+    }
+    if (f.size > maxFileSize) {
+      state.error = `"${f.name}" dosyası çok büyük (max 20MB).`;
+      render();
+      return false;
+    }
+    return true;
+  });
+
+  if (validFiles.length === 0) return;
+
+  let processed = 0;
+  for (const file of validFiles) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // reader.result is a data URL like "data:image/png;base64,XXXXX"
+      // We need just the base64 part (after the comma)
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(',')[1];
+
+      state.uploadedFiles.push({
+        file,
+        base64,
+        mimeType: file.type,
+        name: file.name,
+        size: file.size
+      });
+
+      processed++;
+      if (processed === validFiles.length) {
+        state.error = null;
+        render();
+      }
+    };
+    reader.onerror = () => {
+      state.error = `"${file.name}" dosyası okunamadı.`;
+      processed++;
+      if (processed === validFiles.length) render();
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 async function runAnalyze() {
@@ -282,12 +366,17 @@ async function runAnalyze() {
     render();
     return;
   }
+
   const metin = state.raporMetni.trim();
-  if (!metin) {
-    state.error = 'Lütfen rapor metnini yapıştırın.';
+  const hasFiles = state.uploadedFiles.length > 0;
+
+  // Either files or text is required
+  if (!hasFiles && !metin) {
+    state.error = 'Lütfen en az bir dosya yükleyin veya rapor metnini yapıştırın.';
     render();
     return;
   }
+
   if (!state.hedefKitle) {
     state.error = 'Lütfen raporun kimin için olduğunu seçin.';
     render();
@@ -302,11 +391,24 @@ async function runAnalyze() {
   if (viewLoading) viewLoading.classList.remove('hidden');
 
   try {
-    const result = await analyzeReportWithGroq({
-      raporMetni: metin,
-      kategori: state.kategori,
-      hedefKitle: state.hedefKitle,
-    });
+    let result;
+
+    if (hasFiles) {
+      // ── Vision path: Groq Llama Vision API ──
+      result = await analyzeImageWithGemini({
+        files: state.uploadedFiles.map(f => ({ base64: f.base64, mimeType: f.mimeType })),
+        raporMetni: metin,
+        kategori: state.kategori,
+        hedefKitle: state.hedefKitle,
+      });
+    } else {
+      // ── Text path: Groq / Llama API ──
+      result = await analyzeReportWithGroq({
+        raporMetni: metin,
+        kategori: state.kategori,
+        hedefKitle: state.hedefKitle,
+      });
+    }
 
     populateResultsUI(result);
 
@@ -372,7 +474,7 @@ function populateResultsUI(data) {
   const markersContainer = document.getElementById('anatomy-markers');
   if (markersContainer) {
     markersContainer.innerHTML = '';
-    const organCode = data.anatomi_organ_kodu || "liver";
+    const organCode = data.anatomi_organ_kodu || "liver"; // Liver mock data
     markersContainer.dataset.organ = organCode;
     const coords = getCoordinates(organCode);
 
@@ -439,6 +541,7 @@ export function initApp(root) {
     const textArea = document.getElementById('rapor-metni');
     if (textArea) textArea.value = '';
     state.raporMetni = '';
+    state.uploadedFiles = [];
     state.screen = 'home';
 
     hideChatPanel();

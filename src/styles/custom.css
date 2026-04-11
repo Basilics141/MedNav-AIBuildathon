@@ -1581,3 +1581,201 @@ body.pdf-rendering .pulsing-marker {
     gap: 0.75rem !important;
   }
 }
+
+/* —— File Upload Zone —— */
+.mn-upload-zone {
+  margin-top: 1.75rem;
+}
+
+.mn-upload-dropzone {
+  border: 2px dashed rgba(13, 148, 136, 0.35);
+  border-radius: var(--mn-radius-lg);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.35s var(--mn-ease-out);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.25) 0%, rgba(204, 251, 241, 0.08) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.mn-upload-dropzone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(34, 211, 238, 0.06), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.mn-upload-dropzone:hover,
+.mn-upload-dropzone.mn-dragover {
+  border-color: var(--mn-teal);
+  background: linear-gradient(145deg, rgba(204, 251, 241, 0.25) 0%, rgba(255, 255, 255, 0.4) 100%);
+  box-shadow:
+    0 0 32px -8px rgba(34, 211, 238, 0.45),
+    0 12px 40px -16px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+}
+
+.mn-upload-dropzone:hover::before,
+.mn-upload-dropzone.mn-dragover::before {
+  opacity: 1;
+}
+
+.mn-upload-icon {
+  font-size: 2.75rem;
+  color: var(--mn-teal);
+  margin-bottom: 0.85rem;
+  filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.5));
+  transition: transform 0.35s var(--mn-ease-spring);
+}
+
+.mn-upload-dropzone:hover .mn-upload-icon {
+  transform: scale(1.1) translateY(-3px);
+  animation: mn-upload-bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes mn-upload-bounce {
+  0%, 100% { transform: scale(1.1) translateY(-3px); }
+  50% { transform: scale(1.1) translateY(-8px); }
+}
+
+.mn-upload-text {
+  font-family: var(--mn-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--mn-text);
+  margin: 0 0 0.35rem;
+}
+
+.mn-upload-hint {
+  font-size: 0.9rem;
+  color: var(--mn-text-soft);
+  font-weight: 500;
+  margin: 0;
+}
+
+.mn-upload-formats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mn-text-muted);
+  letter-spacing: 0.03em;
+}
+
+.mn-upload-formats i {
+  color: var(--mn-teal);
+  font-size: 0.85rem;
+}
+
+/* File list */
+.mn-file-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mn-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.15rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.35) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--mn-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 4px 16px -8px rgba(56, 189, 248, 0.12);
+  transition: all 0.25s var(--mn-ease-out);
+  animation: mn-file-slide-in 0.35s var(--mn-ease-spring) backwards;
+}
+
+@keyframes mn-file-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.mn-file-item:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 8px 24px -8px rgba(34, 211, 238, 0.2);
+}
+
+.mn-file-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.mn-file-icon--pdf {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(254, 202, 202, 0.35));
+  color: #dc2626;
+}
+
+.mn-file-icon--png {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(191, 219, 254, 0.35));
+  color: #3b82f6;
+}
+
+.mn-file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mn-file-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--mn-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mn-file-size {
+  font-size: 0.8rem;
+  color: var(--mn-text-soft);
+  font-weight: 500;
+}
+
+.mn-file-remove {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(248, 113, 113, 0.08);
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mn-file-remove:hover {
+  background: rgba(248, 113, 113, 0.2);
+  transform: scale(1.15);
+  box-shadow: 0 0 12px -2px rgba(239, 68, 68, 0.35);
+}

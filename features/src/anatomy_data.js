@@ -38,7 +38,43 @@ export const anatomyMap = {
     left_shoulder: { top: '21%', left: '70%' }, // Sol Omuz
     right_shoulder: { top: '21%', left: '31%' },// Sağ Omuz
     left_knee: { top: '78%', left: '60%' },     // Sol Diz
-    right_knee: { top: '78%', left: '37%' }     // Sağ Diz
+    right_knee: { top: '78%', left: '37%' },
+
+    // --- ENDOKRİN VE LENFATİK SİSTEM ---
+    pituitary: { top: '8%', left: '51%' },       // Hipofiz Bezi
+    pineal: { top: 'XX%', left: 'XX%' },          // Epifiz Bezi
+    thymus: { top: 'XX%', left: 'XX%' },          // Timüs Bezi
+    adrenal_left: { top: 'XX%', left: 'XX%' },    // Sol Böbrek Üstü Bezi
+    adrenal_right: { top: 'XX%', left: 'XX%' },   // Sağ Böbrek Üstü Bezi
+    spleen: { top: 'XX%', left: 'XX%' },          // Dalak
+    lymph_nodes: { top: 'XX%', left: 'XX%' },     // Lenf Düğümleri (Genel)
+
+    // --- SİNİR SİSTEMİ ---
+    spinal_cord: { top: 'XX%', left: 'XX%' },     // Omurilik
+    sciatic_nerve: { top: 'XX%', left: 'XX%' },   // Siyatik Siniri
+
+    // --- İSKELET VE GÖVDE EKLEMELERİ ---
+    neck_cervical: { top: 'XX%', left: 'XX%' },   // Boyun Omurları
+    clavicle: { top: 'XX%', left: 'XX%' },        // Köprücük Kemiği
+    ribcage: { top: 'XX%', left: 'XX%' },         // Göğüs Kafesi / Kaburgalar
+    hip_left: { top: 'XX%', left: 'XX%' },        // Sol Kalça Eklemi
+    hip_right: { top: 'XX%', left: 'XX%' },       // Sağ Kalça Eklemi
+
+    // --- KOLLAR VE ELLER ---
+    elbow_left: { top: 'XX%', left: 'XX%' },      // Sol Dirsek
+    elbow_right: { top: 'XX%', left: 'XX%' },     // Sağ Dirsek
+    wrist_left: { top: 'XX%', left: 'XX%' },      // Sol El Bileği
+    wrist_right: { top: 'XX%', left: 'XX%' },     // Sağ El Bileği
+    hand_left: { top: 'XX%', left: 'XX%' },       // Sol El
+    hand_right: { top: 'XX%', left: 'XX%' },      // Sağ El
+
+    // --- BACAKLAR VE AYAKLAR ---
+    femur_left: { top: 'XX%', left: 'XX%' },      // Sol Uyluk Kemiği
+    femur_right: { top: 'XX%', left: 'XX%' },     // Sağ Uyluk Kemiği
+    ankle_left: { top: 'XX%', left: 'XX%' },      // Sol Ayak Bileği
+    ankle_right: { top: 'XX%', left: 'XX%' },     // Sağ Ayak Bileği
+    foot_left: { top: 'XX%', left: 'XX%' },       // Sol Ayak
+    foot_right: { top: 'XX%', left: 'XX%' },      // Sağ Ayak
 };
 
 export const anatomyNamesTr = {
