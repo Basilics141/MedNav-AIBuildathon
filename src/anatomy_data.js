@@ -42,30 +42,30 @@ export const anatomyMap = {
 
 
     // --- SİNİR SİSTEMİ ---
-    spinal_cord: { top: '130px', left: '180px' },     // Omurilik  
+    spinal_cord: { top: '18%', left: '50%' },     // Omurilik  
 
     // --- İSKELET VE GÖVDE EKLEMELERİ ---
-    neck_cervical: { top: '121px', left: '179px' },   // Boyun Omurları
-    clavicle: { top: '137px', left: '180px' },        // Köprücük Kemiği
-    ribcage: { top: '217px', left: '180px' },         // Göğüs Kafesi / Kaburgalar
-    hip_left: { top: '371px', left: '230px' },        // Sol Kalça Eklemi
-    hip_right: { top: '371px', left: '126px' },       // Sağ Kalça Eklemi
+    neck_cervical: { top: '16%', left: '50%' },   // Boyun Omurları
+    clavicle: { top: '19%', left: '50%' },        // Köprücük Kemiği
+    ribcage: { top: '29%', left: '50%' },         // Göğüs Kafesi / Kaburgalar
+    hip_left: { top: '50%', left: '64%' },        // Sol Kalça Eklemi
+    hip_right: { top: '50%', left: '35%' },       // Sağ Kalça Eklemi
 
     // --- KOLLAR VE ELLER ---
-    elbow_left: { top: '273px', left: '269px' },      // Sol Dirsek
-    elbow_right: { top: '269px', left: '89px' },     // Sağ Dirsek
-    wrist_left: { top: '374px', left: '269px' },      // Sol El Bileği
-    wrist_right: { top: '374px', left: '81px' },     // Sağ El Bileği
-    hand_left: { top: '406px', left: '265px' },       // Sol El
-    hand_right: { top: '406px', left: '84px' },      // Sağ El
+    elbow_left: { top: '37%', left: '75%' },      // Sol Dirsek
+    elbow_right: { top: '36%', left: '25%' },     // Sağ Dirsek
+    wrist_left: { top: '51%', left: '75%' },      // Sol El Bileği
+    wrist_right: { top: '51%', left: '23%' },     // Sağ El Bileği
+    hand_left: { top: '55%', left: '74%' },       // Sol El
+    hand_right: { top: '55%', left: '23%' },      // Sağ El
 
     // --- BACAKLAR VE AYAKLAR ---
-    femur_left: { top: '441px', left: '217px' },      // Sol Uyluk Kemiği
-    femur_right: { top: '441px', left: '128px' },     // Sağ Uyluk Kemiği
-    ankle_left: { top: '666px', left: '266px' },      // Sol Ayak Bileği
-    ankle_right: { top: '666px', left: '134px' },     // Sağ Ayak Bileği
-    foot_left: { top: '707px', left: '353px' },       // Sol Ayak
-    foot_right: { top: '686px', left: '134px' },      // Sağ Ayak
+    femur_left: { top: '60%', left: '60%' },      // Sol Uyluk Kemiği
+    femur_right: { top: '60%', left: '36%' },     // Sağ Uyluk Kemiği
+    ankle_left: { top: '90%', left: '74%' },      // Sol Ayak Bileği
+    ankle_right: { top: '90%', left: '37%' },     // Sağ Ayak Bileği
+    foot_left: { top: '96%', left: '74%' },       // Sol Ayak
+    foot_right: { top: '93%', left: '37%' },      // Sağ Ayak
 };
 
 export const anatomyNamesTr = {
