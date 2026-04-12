@@ -17,10 +17,8 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 
 ### 🖼️ Ekran Görüntüleri
 
-#### 💻 Masaüstü Görünümü
-![Masaüstü Analiz] 
-![Masaüstü 1](<img width="1919" height="948" alt="1" src="https://github.com/user-attachments/assets/cf5940ec-1ff0-4326-87a0-fdec3b7622a7" />
-) 
+#### 💻 Masaüstü Görünümü 
+![Masaüstü 1](https://github.com/user-attachments/assets/be4e1081-af14-43d3-8621-01e04bd73dce)
 ![Masaüstü 2](https://github.com/user-attachments/assets/63055162-6bd1-479f-b09e-9c79dc949cbe) 
 ![Masaüstü 3](https://github.com/user-attachments/assets/a570c0fd-21aa-434f-993d-e5bb2e005eaf) 
 
