@@ -53,7 +53,7 @@ export const anatomyMap = {
 
     // --- KOLLAR VE ELLER ---
     elbow_left: { top: '273px', left: '269px' },      // Sol Dirsek
-    elbow_right: { top: '89px', left: '269px' },     // Sağ Dirsek
+    elbow_right: { top: '269px', left: '89px' },     // Sağ Dirsek
     wrist_left: { top: '374px', left: '269px' },      // Sol El Bileği
     wrist_right: { top: '374px', left: '81px' },     // Sağ El Bileği
     hand_left: { top: '406px', left: '265px' },       // Sol El
