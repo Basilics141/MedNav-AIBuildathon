@@ -7,7 +7,7 @@ Hastaların karmaşık tıbbi tahlil, MR (görüntüleme) ve patoloji raporları
 MedNav, karmaşık tıbbi verileri saniyeler içinde herkesin anlayabileceği sade bir dile çeviren bir yapay zeka asistanıdır. Groq API (Llama 3) kullanılarak geliştirilen bu sistem; sıradan bir çevirici değil, hastanın profiline (çocuk, yetişkin, yaşlı) göre dilini ayarlayabilen dinamik bir 'Agent' mimarisine sahiptir. Teşhisleri sadece metinle bırakmaz; radar grafikleri ve anatomik vücut haritaları ile görselleştirir, hastanın doktoruna sorabileceği soruları hazırlar ve tüm bu verileri tek tıkla cihaz bağımsız bir PDF raporuna dönüştürür.
 
 ## 🚀 Canlı Demo
-- **Yayın Linki:** https://mednav-ai-analiz.netlify.app/
+- **Yayın Linki:** https://mednav-ai-buildathon.vercel.app/
 - **Demo Video:** https://www.loom.com/share/c1984a476403404897623fedd519924b
 
 ## 📖 Portfolyo ve Proje Hikayesi 
@@ -36,7 +36,7 @@ Uygulamayı tasarlarken statik bir çeviri yerine dinamik bir mimari kurgulayara
 - **Frontend:** HTML5, Vanilla JavaScript, CSS3
 - **Stil & Tasarım:** Tailwind CSS
 - **Kütüphaneler:** html2pdf.js, Chart.js 
-- **Deployment:** Netlify, GitHub
+- **Deployment:** Vercel, GitHub
 ​- **Geliştirme Ortamı & AI Asistanı:** Cursor IDE (Antigravity)
 
 ## ⚙️ Nasıl Çalıştırılır?
