@@ -309,9 +309,9 @@
 
       .mn-medical-grid {
         background-image: 
-          linear-gradient(rgba(34, 211, 238, 0.08) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(34, 211, 238, 0.08) 1px, transparent 1px) !important;
-        background-size: 40px 40px !important;
+          linear-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(34, 211, 238, 0.15) 1px, transparent 1px) !important;
+        background-size: 32px 32px !important;
       }
 
       @keyframes reverse-spin {
@@ -351,6 +351,7 @@
     </style>
   </head>
   <body class="mn-body text-lg md:text-[1.1875rem] leading-relaxed antialiased relative text-gray-800">
+    <canvas id="mn-topo-canvas" class="fixed inset-0 z-[-1] min-h-screen w-full pointer-events-none" aria-hidden="true"></canvas>
     <!-- Dynamic Holographic Header -->
     <header class="w-full min-w-full h-24 flex items-center justify-between px-12 relative sticky top-0 z-50 border-b border-white/20 overflow-hidden no-print">
       <!-- Animated Base Layer -->

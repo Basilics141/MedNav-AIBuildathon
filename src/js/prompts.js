@@ -34,7 +34,7 @@ export function buildSystemPrompt({ kategori, hedefKitle }) {
     kategori !== 'goruntuleme'
       ? 'Bu kategori görüntüleme değil: anatomi_organ_kodu alanını mutlaka null yap.'
       : 'Görüntüleme raporu: raporda vurgulanan ana anatomik bölgeyi aşağıdaki izin listesinden EN BİR kod ile seç; emin değilsen null ver.',
-    'İzinli anatomi kodları (tam eşleşme): bas, gogus, sol_akciger, sag_akciger, karin, kalp, karaciger, bobrek_sol, bobrek_sag, kalca, diz_sol, diz_sag, ayak, genel.',
+    'İzinli anatomi kodları (tam eşleşme): brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee, spinal_cord, neck_cervical, clavicle, ribcage, hip_left, hip_right, elbow_left, elbow_right, wrist_left, wrist_right, hand_left, hand_right, femur_left, femur_right, ankle_left, ankle_right, foot_left, foot_right, genel.',
     'JSON şeması (Türkçe metinler):',
     '{',
     '  "ozet": string,  // yaklaşık 8. sınıf düzeyinde, kısa ve anlaşılır özet',
@@ -97,7 +97,7 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
     2. Cevabın SADECE ve KESİNLİKLE geçerli bir JSON nesnesi olmalıdır.
     3. JSON bloğu dışında tek bir kelime, açıklama veya markdown işaretleri (kod blokları) ekleme.
     4. "anatomi_organ_kodu" için YALNIZCA şu listeden en uygun olan KODU seçmelisin: 
-       [brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee]
+       [brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee, spinal_cord, neck_cervical, clavicle, ribcage, hip_left, hip_right, elbow_left, elbow_right, wrist_left, wrist_right, hand_left, hand_right, femur_left, femur_right, ankle_left, ankle_right, foot_left, foot_right]
        Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de). Emin değilsen "general" seç.
     5. "risk_level" için raporun bütününe göre ('High', 'Medium', 'Low') değerlerinden birini seç.
     
@@ -115,4 +115,25 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
       "risk_level": "High | Medium | Low"
     }
   `.trim();
+}
+
+/**
+ * Gemini Vision Prompt Engine
+ * Extends the base Gemini prompt with vision-specific analysis instructions
+ * for handling uploaded medical images (PNG) and PDF reports.
+ */
+export function buildGeminiVisionPrompt({ kategori, hedefKitle }) {
+  const basePrompt = buildGeminiSystemPrompt({ kategori, hedefKitle });
+
+  const visionAddendum = `
+    EK GÖRSEL ANALİZ TALİMATLARI:
+    1. Sana gönderilen görsel(ler)i ve/veya PDF dosyasını dikkatle incele.
+    2. Dosyalar tıbbi görüntüleme raporları (MR, röntgen, ultrason, tomografi), patoloji fotoğrafları, tahlil çıktıları veya diğer sağlık belgeleri olabilir.
+    3. Görselde veya PDF'te yazılı metin varsa OCR yaparak oku ve analizine dahil et.
+    4. Görsel tıbbi bir görüntü ise (röntgen, MR, ultrason, patoloji kesiti vb.) bulgularını tanımla ve raporla.
+    5. Birden fazla dosya gönderilmişse, hepsini birlikte değerlendirerek bütünlüklü bir analiz sun.
+    6. Cevabını KESİNLİKLE yukarıdaki JSON formatında ver. Ekstra metin, açıklama veya markdown ekleme.
+  `;
+
+  return basePrompt + '\n\n' + visionAddendum.trim();
 }

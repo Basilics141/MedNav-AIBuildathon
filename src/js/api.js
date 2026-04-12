@@ -1,4 +1,4 @@
-import { buildSystemPrompt, buildUserPrompt, CLAUDE_MODEL, buildGeminiSystemPrompt } from './prompts.js';
+import { buildSystemPrompt, buildUserPrompt, CLAUDE_MODEL, buildGeminiSystemPrompt, buildGeminiVisionPrompt } from './prompts.js';
 import { parseClaudeAnalysis } from './parse.js';
 
 const ANTHROPIC_MESSAGES_URL = 'https://api.anthropic.com/v1/messages';
@@ -80,7 +80,7 @@ export async function analyzeWithGemini({ raporMetni, kategori, hedefKitle, apiK
   const systemPrompt = buildGeminiSystemPrompt({ kategori, hedefKitle });
   const userContent = `Aşağıdaki ${kategori} raporunu analiz et:\n\n${raporMetni}`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
 
   const body = {
     contents: [
@@ -222,5 +222,93 @@ export async function chatWithGroq({ messages }) {
 
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
+}
+
+/**
+ * Groq Vision API — Multimodal file (image) + text analysis via Llama 3.2 Vision
+ * Uses the existing Groq API key. Supports PNG images as base64.
+ * PDF files are sent as text description since Groq vision only supports images.
+ * Returns the same JSON schema as the Groq text analysis for seamless UI integration.
+ * 
+ * @param {{ files: Array<{base64: string, mimeType: string}>, raporMetni: string, kategori: string, hedefKitle: string }} payload
+ */
+export async function analyzeWithGeminiVision({ files, raporMetni, kategori, hedefKitle }) {
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+  if (!apiKey || apiKey === 'YOUR_GROQ_API_KEY_HERE') {
+    throw new Error('Groq API anahtarı bulunamadı. .env dosyasına VITE_GROQ_API_KEY değerini ekleyin.');
+  }
+
+  const systemPrompt = buildGeminiVisionPrompt({ kategori, hedefKitle });
+
+  // Build OpenAI-compatible multimodal content array
+  const userContent = [];
+
+  // Add each uploaded image file
+  for (const f of files) {
+    if (f.mimeType.startsWith('image/')) {
+      userContent.push({
+        type: "image_url",
+        image_url: {
+          url: `data:${f.mimeType};base64,${f.base64}`
+        }
+      });
+    }
+  }
+
+  // Add optional text context
+  const metin = raporMetni?.trim();
+  if (metin) {
+    userContent.push({
+      type: "text",
+      text: `Rapor metni:\n${metin}`
+    });
+  }
+
+  // If no text was added, add a generic instruction
+  if (!userContent.some(c => c.type === 'text')) {
+    userContent.push({
+      type: "text",
+      text: "Bu tıbbi görseli analiz et ve istenen JSON formatında yanıt ver."
+    });
+  }
+
+  const body = {
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userContent }
+    ],
+    temperature: 0.1,
+    max_tokens: 2048,
+    response_format: { type: "json_object" }
+  };
+
+  try {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey.trim()}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(`Görsel Analiz Hatası (${res.status}): ${errData.error?.message || 'Bilinmeyen hata'}`);
+    }
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content;
+
+    if (!text) {
+      throw new Error('Görsel analiz motoru geçerli bir yanıt üretmedi.');
+    }
+
+    return JSON.parse(text);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+    throw new Error('Görsel analiz işlemi başarısız oldu.');
+  }
 }
 
