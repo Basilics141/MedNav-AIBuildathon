@@ -153,7 +153,7 @@ export async function analyzeWithGroq({ raporMetni, kategori, hedefKitle }) {
   const userContent = `Aşağıdaki ${kategori} raporunu analiz et:\n\n${raporMetni}`;
 
   const body = {
-    model: "llama-3.1-70b-versatile",
+    model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userContent }
@@ -200,7 +200,7 @@ export async function chatWithGroq({ messages }) {
   if (!apiKey) throw new Error('Groq API anahtarı eksik.');
 
   const body = {
-    model: "llama-3.1-70b-versatile",
+    model: "llama-3.3-70b-versatile",
     messages: messages,
     temperature: 0.5,
     max_tokens: 1024
