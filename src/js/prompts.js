@@ -33,8 +33,9 @@ export function buildSystemPrompt({ kategori, hedefKitle }) {
     `Rapor kategorisi: ${kat}.`,
     kategori !== 'goruntuleme'
       ? 'Bu kategori görüntüleme değil: anatomi_organ_kodu alanını mutlaka null yap.'
-      : 'Görüntüleme raporu: raporda vurgulanan ana anatomik bölgeyi aşağıdaki izin listesinden EN BİR kod ile seç; emin değilsen null ver.',
-    'İzinli anatomi kodları (tam eşleşme): brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee, spinal_cord, neck_cervical, clavicle, ribcage, hip_left, hip_right, elbow_left, elbow_right, wrist_left, wrist_right, hand_left, hand_right, femur_left, femur_right, ankle_left, ankle_right, foot_left, foot_right, genel.',
+      : 'Görüntüleme raporu: raporda vurgulanan ana anatomik bölgeyi aşağıdaki izin listesinden EN BİR kod ile seç.',
+    'İzinli anatomi kodları (tam eşleşme): brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee, spinal_cord, neck_cervical, clavicle, ribcage, hip_left, hip_right, elbow_left, elbow_right, wrist_left, wrist_right, hand_left, hand_right, femur_left, femur_right, ankle_left, ankle_right, foot_left, foot_right.',
+    'ZORUNLU MANTIK: Raporda bir yapı listede doğrudan yoksa, o yapının anatomik ebeveynini veya en yakın ilişkili kodu seç. ASLA null, bilinmeyen veya listede olmayan bir kelime yazma. Örnekler: "üreter" veya "renal pelvis" → kidneys; "aort" veya "koroner" → heart; "özofagus" veya "larinks" → throat; "menisk" veya "bağ" → ilgili diz/dirsek/eklem kodu; "nefron" → kidneys; "safra kanalı" → gallbladder; "sigmoid" veya "rektum" → colon; "ince bağırsak segmenti" → intestines; "adrenal bez" → kidneys; "pleura" → lungs; "periton" → intestines; "femur boynu" → femur_left veya femur_right; "sakrum" veya "koksiks" → pelvis. Hiçbir yakın eşleşme bulamazsan "general" seç.',
     'JSON şeması (Türkçe metinler):',
     '{',
     '  "ozet": string,  // yaklaşık 8. sınıf düzeyinde, kısa ve anlaşılır özet',
@@ -98,7 +99,9 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
     3. JSON bloğu dışında tek bir kelime, açıklama veya markdown işaretleri (kod blokları) ekleme.
     4. "anatomi_organ_kodu" için YALNIZCA şu listeden en uygun olan KODU seçmelisin: 
        [brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee, spinal_cord, neck_cervical, clavicle, ribcage, hip_left, hip_right, elbow_left, elbow_right, wrist_left, wrist_right, hand_left, hand_right, femur_left, femur_right, ankle_left, ankle_right, foot_left, foot_right]
-       Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de). Emin değilsen "general" seç.
+       Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de).
+       ZORUNLU MANTIK: Raporda geçen yapı listede yoksa, anatomik ebeveynini veya en yakın ilişkili kodu seç. ASLA null veya listede olmayan bir değer yazma.
+       Örnekler: "üreter"/"renal pelvis" → kidneys; "aort"/"koroner" → heart; "özofagus"/"larinks" → throat; "menisk"/"bağ" → ilgili diz veya eklem kodu; "nefron" → kidneys; "safra kanalı" → gallbladder; "sigmoid"/"rektum" → colon; "adrenal bez" → kidneys; "pleura" → lungs; "periton" → intestines; "femur boynu" → femur_left veya femur_right; "sakrum"/"koksiks" → pelvis. Hiçbir eşleşme bulamazsan "general" seç.
     5. "risk_level" için raporun bütününe göre ('High', 'Medium', 'Low') değerlerinden birini seç.
     
     İSTENEN JSON FORMATI:

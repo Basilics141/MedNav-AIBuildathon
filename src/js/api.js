@@ -273,7 +273,7 @@ export async function analyzeWithGeminiVision({ files, raporMetni, kategori, hed
   }
 
   const body = {
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: "qwen/qwen3.8-27b",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userContent }

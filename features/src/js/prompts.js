@@ -33,8 +33,9 @@ export function buildSystemPrompt({ kategori, hedefKitle }) {
     `Rapor kategorisi: ${kat}.`,
     kategori !== 'goruntuleme'
       ? 'Bu kategori görüntüleme değil: anatomi_organ_kodu alanını mutlaka null yap.'
-      : 'Görüntüleme raporu: raporda vurgulanan ana anatomik bölgeyi aşağıdaki izin listesinden EN BİR kod ile seç; emin değilsen null ver.',
+      : 'Görüntüleme raporu: raporda vurgulanan ana anatomik bölgeyi aşağıdaki izin listesinden EN BİR kod ile seç.',
     'İzinli anatomi kodları (tam eşleşme): bas, gogus, sol_akciger, sag_akciger, karin, kalp, karaciger, bobrek_sol, bobrek_sag, kalca, diz_sol, diz_sag, ayak, genel.',
+    'ZORUNLU MANTIK: Raporda bir yapı listede doğrudan yoksa, anatomik ebeveynini veya en yakın ilişkili kodu seç. ASLA null veya listede olmayan bir değer yazma. Hiçbir eşleşme bulamazsan "genel" seç.',,
     'JSON şeması (Türkçe metinler):',
     '{',
     '  "ozet": string,  // yaklaşık 8. sınıf düzeyinde, kısa ve anlaşılır özet',
@@ -98,7 +99,9 @@ export function buildGeminiSystemPrompt({ kategori, hedefKitle }) {
     3. JSON bloğu dışında tek bir kelime, açıklama veya markdown işaretleri (kod blokları) ekleme.
     4. "anatomi_organ_kodu" için YALNIZCA şu listeden en uygun olan KODU seçmelisin: 
        [brain, eyes, throat, thyroid, heart, lungs, lung_right, lung_left, liver, stomach, pancreas, gallbladder, kidneys, kidney_right, kidney_left, intestines, colon, appendix, bladder, pelvis, uterus, prostate, spine, left_shoulder, right_shoulder, left_knee, right_knee]
-       Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de). Emin değilsen "general" seç.
+       Kesinlikle doğal dil kullanma (örn: "Sağ Diz" deme, "right_knee" de).
+       ZORUNLU MANTIK: Raporda geçen yapı listede yoksa, anatomik ebeveynini veya en yakın ilişkili kodu seç. ASLA null veya listede olmayan bir değer yazma.
+       Örnekler: "üreter"/"renal pelvis" → kidneys; "aort"/"koroner" → heart; "özofagus"/"larinks" → throat; "menisk"/"bağ" → ilgili diz veya eklem kodu; "nefron" → kidneys; "safra kanalı" → gallbladder; "sigmoid"/"rektum" → colon; "adrenal bez" → kidneys; "pleura" → lungs; "periton" → intestines. Hiçbir eşleşme bulamazsan "general" seç.
     5. "risk_level" için raporun bütününe göre ('High', 'Medium', 'Low') değerlerinden birini seç.
     
     İSTENEN JSON FORMATI:
